@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:lora_monitor/domain/measure.dart';
 
 // ignore: must_be_immutable
-class LastMeasure extends StatelessWidget {
+class Dashboard extends StatelessWidget {
   late Stream<QuerySnapshot> _usersStream;
-  LastMeasure({Key? key}) : super(key: key) {
+  Dashboard({Key? key}) : super(key: key) {
     _usersStream = FirebaseFirestore.instance
-        .collection("/Users/yuY2SQJgcOYgPUKvUdRx/lastMeasure")
+        .collection("users/yuY2SQJgcOYgPUKvUdRx/dashboard/userLimits/values")
         .snapshots();
   }
   @override
@@ -34,11 +34,12 @@ class LastMeasure extends StatelessWidget {
 List<Measure> getLastMeasures(AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
   // Get all the scores from players
   List<Measure> lastMeasures = [];
+  print(snapshot.data!.docs);
   ListView(
     children: snapshot.data!.docs
         .map((DocumentSnapshot document) {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          lastMeasures.add(Measure.fromJson(data));
+          print(data); //lastMeasures.add(Measure.fromJson(data));
         })
         .toList()
         .cast(),
