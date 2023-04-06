@@ -4,15 +4,21 @@ import 'package:lora_monitor/domain/user_limit.dart';
 import 'package:lora_monitor/presentation/core/size_config.dart';
 import 'package:lora_monitor/presentation/core/text.dart';
 import 'package:intl/intl.dart';
+import 'package:lora_monitor/presentation/home.dart';
 
 class DashboardView extends StatelessWidget {
-  const DashboardView({super.key, required this.measure, required this.limits});
+  const DashboardView(
+      {super.key,
+      required this.measure,
+      required this.limits,
+      required this.changePage});
   final List<Measure> measure;
   final List<UserLimit> limits;
+  final Function changePage;
 
   @override
   Widget build(BuildContext context) {
-    return getVerticalList(measure, limits);
+    return getVerticalList(measure, limits, changePage);
   }
 }
 
@@ -107,7 +113,8 @@ class PercentageWidget extends StatelessWidget {
   }
 }
 
-Widget getVerticalList(List<Measure> lastMeasures, List<UserLimit> limits) {
+Widget getVerticalList(
+    List<Measure> lastMeasures, List<UserLimit> limits, Function changePage) {
   return SizedBox(
     height: SizeConfig.blockSizeVertical * 85,
     child: ListView(
@@ -121,7 +128,9 @@ Widget getVerticalList(List<Measure> lastMeasures, List<UserLimit> limits) {
               height: SizeConfig.blockSizeVertical * 40,
               width: SizeConfig.blockSizeHorizontal * 100,
               child: GestureDetector(
-                // onTap: () => {changePage("chart")},
+                onTap: () => {
+                  changePage(HomeState.chart, lastMeasures[index].sensorName)
+                },
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.all(6.0),

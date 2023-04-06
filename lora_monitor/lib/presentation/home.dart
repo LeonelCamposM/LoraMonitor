@@ -9,6 +9,8 @@ enum NavigationState {
   settings,
 }
 
+enum HomeState { dashboard, chart }
+
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -46,6 +48,7 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage> {
   NavigationState navState = NavigationState.home;
+  HomeState homState = HomeState.dashboard;
 
   @override
   void initState() {
@@ -58,6 +61,13 @@ class MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void changePage(HomeState page, String sensorName) {
+    setState(() {
+      print(sensorName);
+      homState = page;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -65,8 +75,16 @@ class MyHomePageState extends State<MyHomePage> {
 
     switch (navState) {
       case NavigationState.home:
-        changeTitle("Mediciones más recientes");
-        currentPage = const DashboardStream();
+        switch (homState) {
+          case HomeState.dashboard:
+            changeTitle("Mediciones más recientes");
+            currentPage = DashboardStream(changePage: changePage);
+            break;
+          case HomeState.chart:
+            changeTitle("Gráficos de mediciones");
+            currentPage = const Text("chart");
+            break;
+        }
         break;
       case NavigationState.settings:
         changeTitle("Configuración de alertas");
@@ -80,9 +98,17 @@ class MyHomePageState extends State<MyHomePage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: homState != HomeState.chart
+          ? AppBar(
+              title: Text(widget.title),
+            )
+          : AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => changePage(HomeState.dashboard, ""),
+              ),
+              title: Text(widget.title),
+            ),
       body: currentPage,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

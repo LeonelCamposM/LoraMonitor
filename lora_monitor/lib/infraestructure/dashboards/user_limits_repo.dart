@@ -36,9 +36,6 @@ class _UserLimitsRepoState extends State<UserLimitsRepo> {
         for (var element in userLimitsList) {
           if (element.measure == "humidity") humidityLimit = element;
         }
-        print(humidityLimit.max);
-        print(humidityLimit.min);
-        print(humidityLimit.measure);
         return AlertSettings(
           limit: humidityLimit,
         );
@@ -58,6 +55,5 @@ List<UserLimit> getUserLimits(AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
         .toList()
         .cast(),
   );
-  print(userLimits);
   return userLimits;
 }
