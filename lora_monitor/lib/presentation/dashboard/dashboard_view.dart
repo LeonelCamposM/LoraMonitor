@@ -29,28 +29,7 @@ class CircularChartCard extends StatelessWidget {
     limitsMap = {for (var limit in limits) limit.measure: limit};
     return Padding(
         padding: const EdgeInsets.all(10),
-        child: getVerticalIcon(sensorMeasure, limitsMap)
-        //     Row(
-        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //   children: [
-        //     DashboardIcon(
-        //         measure: sensorMeasure.humidity,
-        //         limit: limitsMap["humidity"]!,
-        //         title: "Humedad",
-        //         goodColor: Colors.blue,
-        //         badColor: Colors.red),
-        //     SizedBox(
-        //       width: SizeConfig.blockSizeHorizontal * 10,
-        //     ),
-        //     DashboardIcon(
-        //         measure: sensorMeasure.battery,
-        //         limit: limitsMap["battery"]!,
-        //         title: "Batería",
-        //         goodColor: Colors.yellow,
-        //         badColor: Colors.red)
-        //   ],
-        // ),
-        );
+        child: getVerticalIcon(sensorMeasure, limitsMap));
   }
 }
 
@@ -161,8 +140,8 @@ Widget getVerticalList(List<Measure> lastMeasures, List<UserLimit> limits) {
                                 Column(
                                   children: [
                                     getBodyText(
-                                        " ${DateFormat('dd MMMM', 'es').format(lastMeasures[index].date.toDate()).replaceAll(" ", " de ")}" +
-                                            " ${DateFormat(DateFormat.jm().pattern).format(lastMeasures[index].date.toDate())}",
+                                        " ${DateFormat('dd MMMM', 'es').format(lastMeasures[index].date.toDate()).replaceAll(" ", " de ")}"
+                                        " ${DateFormat(DateFormat.jm().pattern).format(lastMeasures[index].date.toDate())}",
                                         false),
                                     Column(
                                       crossAxisAlignment:
@@ -262,7 +241,7 @@ Widget getVerticalIcon(Measure lastMeasure, Map<String, UserLimit> limitsMap) {
   }
   mapKeys.sort(((a, b) => translateTitle(a).compareTo(translateTitle(b))));
   return SizedBox(
-    height: SizeConfig.blockSizeVertical * 25,
+    height: SizeConfig.blockSizeVertical * 30,
     width: SizeConfig.blockSizeHorizontal * 79,
     child: ListView(
         reverse: false,
@@ -284,7 +263,7 @@ Widget getVerticalIcon(Measure lastMeasure, Map<String, UserLimit> limitsMap) {
                           measure: measureMap[mapKeys[index * 2]] as double,
                           limit: limitsMap[mapKeys[index * 2]]!,
                           title: translateTitle(mapKeys[index * 2]),
-                          goodColor: Color(0xFF0798A5),
+                          goodColor: const Color(0xFF0798A5),
                           badColor: Colors.red),
                     ],
                   ),
@@ -301,7 +280,7 @@ Widget getVerticalIcon(Measure lastMeasure, Map<String, UserLimit> limitsMap) {
                                     as double,
                                 limit: limitsMap[mapKeys[index * 2 + 1]]!,
                                 title: translateTitle(mapKeys[index * 2 + 1]),
-                                goodColor: Color(0xFF0798A5),
+                                goodColor: const Color(0xFF0798A5),
                                 badColor: Colors.red),
                           ],
                         ),
