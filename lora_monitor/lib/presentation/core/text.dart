@@ -15,7 +15,7 @@ Widget getBodyText(String text, bool bold) {
     textWidget = Text(
       text,
       style: GoogleFonts.heebo(
-        fontSize: 18,
+        fontSize: 15,
       ),
     );
   }
