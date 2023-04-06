@@ -74,7 +74,7 @@ class MyHomePageState extends State<MyHomePage> {
         break;
       case NavigationState.measures:
         changeTitle("Recolección de datos");
-        currentPage = Text("home");
+        currentPage = const Text("home");
         //currentPage = const APSensorRepo();
         break;
     }
