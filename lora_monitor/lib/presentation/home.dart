@@ -65,12 +65,11 @@ class MyHomePageState extends State<MyHomePage> {
     switch (navState) {
       case NavigationState.home:
         changeTitle("Mediciones más recientes");
-        currentPage = UserLimitsRepo();
+        currentPage = Text("home");
         break;
       case NavigationState.settings:
         changeTitle("Configuración de alertas");
-        currentPage = Text("home");
-        //currentPage = const SettingsStream();
+        currentPage = UserLimitsRepo();
         break;
       case NavigationState.measures:
         changeTitle("Recolección de datos");
