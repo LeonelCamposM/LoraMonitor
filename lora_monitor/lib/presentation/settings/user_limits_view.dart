@@ -1,19 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lora_monitor/domain/user_limit.dart';
+import 'package:lora_monitor/infraestructure/settings/user_limits_repo.dart';
 import 'package:lora_monitor/presentation/core/size_config.dart';
 import 'package:lora_monitor/presentation/core/text.dart';
 
-// ignore: must_be_immutable
-class AlertSettings extends StatefulWidget {
-  AlertSettings({super.key, required this.limit});
-  UserLimit limit;
+class UserLimitsView extends StatefulWidget {
+  const UserLimitsView({super.key, required this.limit});
+  final UserLimit limit;
 
   @override
-  State<AlertSettings> createState() => _AlertSettingsState();
+  State<UserLimitsView> createState() => _UserLimitsViewState();
 }
 
-class _AlertSettingsState extends State<AlertSettings> {
+class _UserLimitsViewState extends State<UserLimitsView> {
   double min = 0;
   double max = 0;
 
@@ -29,13 +28,6 @@ class _AlertSettingsState extends State<AlertSettings> {
     super.initState();
     min = widget.limit.min.toDouble();
     max = widget.limit.max.toDouble();
-  }
-
-  void updateUserLimits(min, max) {
-    var ref = FirebaseFirestore.instance
-        .collection("/users/yuY2SQJgcOYgPUKvUdRx/userLimits/")
-        .doc("humidity");
-    ref.set(UserLimit(max, min, "humidity").toJson());
   }
 
   @override

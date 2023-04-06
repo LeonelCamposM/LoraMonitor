@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:lora_monitor/presentation/core/loading.dart';
 
 class DashboardStream extends StatelessWidget {
   const DashboardStream({super.key});
@@ -13,9 +14,7 @@ class DashboardStream extends StatelessWidget {
       builder: (BuildContext context,
           AsyncSnapshot<QuerySnapshot> userLimitssnapshot) {
         if (!userLimitssnapshot.hasData) {
-          return const CircularProgressIndicator(
-            color: Colors.green,
-          );
+          return getLoading();
         }
         return FutureBuilder<QuerySnapshot>(
           future: FirebaseFirestore.instance
@@ -24,9 +23,7 @@ class DashboardStream extends StatelessWidget {
           builder: (BuildContext context,
               AsyncSnapshot<QuerySnapshot> lastMeasuressnapshot) {
             if (!lastMeasuressnapshot.hasData) {
-              return const CircularProgressIndicator(
-                color: Colors.green,
-              );
+              return getLoading();
             }
 
             String data = "";

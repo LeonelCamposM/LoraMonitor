@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lora_monitor/infraestructure/dashboard_repo.dart';
-import 'package:lora_monitor/infraestructure/user_limits_repo.dart';
+import 'package:lora_monitor/infraestructure/dashboard_stream.dart';
+import 'package:lora_monitor/infraestructure/settings/user_limits_stream.dart';
 import 'core/size_config.dart';
 
 enum NavigationState {
@@ -70,7 +70,7 @@ class MyHomePageState extends State<MyHomePage> {
         break;
       case NavigationState.settings:
         changeTitle("Configuración de alertas");
-        currentPage = UserLimitsRepo();
+        currentPage = UserLimitsStream();
         break;
       case NavigationState.measures:
         changeTitle("Recolección de datos");
