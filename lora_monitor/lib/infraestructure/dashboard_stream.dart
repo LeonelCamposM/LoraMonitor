@@ -29,28 +29,17 @@ class DashboardStream extends StatelessWidget {
               return getLoading();
             }
 
-            // String data = "";
-            // for (var doc in lastMeasuressnapshot.data!.docs) {
-            //   data += (doc.id);
-            //   data += (doc.data().toString());
-            //   data += "\n+++++++++++++++++++++\n";
-            // }
-            // for (var doc in userLimitssnapshot.data!.docs) {
-            //   data += (doc.id);
-            //   data += (doc.data().toString());
-            //   data += "\n----------------------\n";
-            // }
             List<UserLimit> userLimits = [];
             for (var doc in userLimitssnapshot.data!.docs) {
               userLimits
                   .add(UserLimit.fromJson(doc.data() as Map<dynamic, dynamic>));
             }
-            return DashboardView(
-                measure: Measure.fromJson(lastMeasuressnapshot.data!.docs[1]
-                    .data() as Map<dynamic, dynamic>),
-                limits: userLimits);
-            //UserLimit.fromJson(userLimitssnapshot.data!.docs[1]
-            //    .data() as Map<dynamic, dynamic>));
+            List<Measure> measureList = [];
+            for (var doc in lastMeasuressnapshot.data!.docs) {
+              measureList
+                  .add(Measure.fromJson(doc.data() as Map<dynamic, dynamic>));
+            }
+            return DashboardView(measure: measureList, limits: userLimits);
           },
         );
       },
