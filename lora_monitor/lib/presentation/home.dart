@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lora_monitor/infraestructure/dashboards/dashboard_repo.dart';
+import 'package:lora_monitor/infraestructure/dashboards/user_limits_repo.dart';
 import 'core/size_config.dart';
 
 enum NavigationState {
@@ -65,7 +65,7 @@ class MyHomePageState extends State<MyHomePage> {
     switch (navState) {
       case NavigationState.home:
         changeTitle("Mediciones más recientes");
-        currentPage = Dashboard();
+        currentPage = UserLimitsRepo();
         break;
       case NavigationState.settings:
         changeTitle("Configuración de alertas");

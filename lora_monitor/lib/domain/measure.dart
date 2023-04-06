@@ -1,11 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Measure {
   double temperature;
   double pressure;
   double altitude;
-  int battery;
-  int humidity;
+  double battery;
+  double humidity;
   String sensorName;
-  DateTime date;
+  Timestamp date;
 
   Measure(this.temperature, this.pressure, this.altitude, this.battery,
       this.humidity, this.sensorName, this.date);
@@ -14,10 +16,10 @@ class Measure {
       json['temperature'] as double,
       json['pressure'] as double,
       json['altitude'] as double,
-      json['battery'] as int,
-      json['humidity'] as int,
+      json['battery'] as double,
+      json['humidity'] as double,
       json['sensorName'] as String,
-      DateTime.parse(json['date'] as String));
+      json['date'] as Timestamp);
 
   Map<dynamic, dynamic> toJson() => {
         'temperature': temperature,
