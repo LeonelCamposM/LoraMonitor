@@ -40,12 +40,17 @@ class DashboardStream extends StatelessWidget {
             //   data += (doc.data().toString());
             //   data += "\n----------------------\n";
             // }
-
+            List<UserLimit> userLimits = [];
+            for (var doc in userLimitssnapshot.data!.docs) {
+              userLimits
+                  .add(UserLimit.fromJson(doc.data() as Map<dynamic, dynamic>));
+            }
             return DashboardView(
                 measure: Measure.fromJson(lastMeasuressnapshot.data!.docs[1]
                     .data() as Map<dynamic, dynamic>),
-                limit: UserLimit.fromJson(userLimitssnapshot.data!.docs[1]
-                    .data() as Map<dynamic, dynamic>));
+                limits: userLimits);
+            //UserLimit.fromJson(userLimitssnapshot.data!.docs[1]
+            //    .data() as Map<dynamic, dynamic>));
           },
         );
       },

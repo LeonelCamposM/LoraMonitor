@@ -6,9 +6,9 @@ import 'package:lora_monitor/presentation/core/text.dart';
 import 'package:intl/intl.dart';
 
 class DashboardView extends StatelessWidget {
-  const DashboardView({super.key, required this.measure, required this.limit});
+  const DashboardView({super.key, required this.measure, required this.limits});
   final Measure measure;
-  final UserLimit limit;
+  final List<UserLimit> limits;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class DashboardView extends StatelessWidget {
                               children: [
                                 CircularChartCard(
                                   sensorMeasure: measure,
-                                  limit: limit,
+                                  limits: limits,
                                 ),
                               ],
                             ),
@@ -65,42 +65,59 @@ class DashboardView extends StatelessWidget {
 // ignore: must_be_immutable
 class CircularChartCard extends StatelessWidget {
   CircularChartCard(
-      {super.key, required this.sensorMeasure, required this.limit});
+      {super.key, required this.sensorMeasure, required this.limits});
   Measure sensorMeasure;
-  UserLimit limit;
+  List<UserLimit> limits;
+  Map<String, UserLimit> limitsMap = <String, UserLimit>{};
 
   @override
   Widget build(BuildContext context) {
+    limitsMap = {for (var limit in limits) limit.measure: limit};
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          limit.max > sensorMeasure.humidity &&
-                  limit.min < sensorMeasure.humidity
-              ? PercentageWidget(
-                  percentaje: sensorMeasure.humidity.toDouble(),
-                  title: "Humedad",
-                  barColor: Colors.lightBlue,
-                )
-              : PercentageWidget(
-                  percentaje: sensorMeasure.humidity.toDouble(),
-                  title: "Humedad",
-                  barColor: Colors.red,
-                ),
-          10 < sensorMeasure.battery
-              ? PercentageWidget(
-                  percentaje: sensorMeasure.battery.toDouble(),
-                  title: "Batería",
-                  barColor: const Color.fromARGB(255, 236, 213, 3),
-                )
-              : PercentageWidget(
-                  percentaje: sensorMeasure.battery.toDouble(),
-                  title: "Batería",
-                  barColor: Colors.red,
-                ),
+          DashboardIcon(
+              measure: sensorMeasure.humidity,
+              limit: limitsMap["humidity"]!,
+              title: "Humedad",
+              goodColor: Colors.blue,
+              badColor: Colors.red),
+          DashboardIcon(
+              measure: sensorMeasure.battery,
+              limit: limitsMap["battery"]!,
+              title: "Batería",
+              goodColor: Colors.yellow,
+              badColor: Colors.red)
         ],
       ),
+    );
+  }
+}
+
+class DashboardIcon extends StatelessWidget {
+  const DashboardIcon(
+      {super.key,
+      required this.measure,
+      required this.limit,
+      required this.title,
+      required this.goodColor,
+      required this.badColor});
+  final double measure;
+  final UserLimit limit;
+  final String title;
+  final Color goodColor;
+  final Color badColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final isWithinLimits = limit.max > measure && limit.min < measure;
+    final barColor = isWithinLimits ? goodColor : badColor;
+    return PercentageWidget(
+      percentaje: measure,
+      title: title,
+      barColor: barColor,
     );
   }
 }
