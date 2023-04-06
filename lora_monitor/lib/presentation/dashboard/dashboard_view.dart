@@ -108,11 +108,7 @@ class PercentageWidget extends StatelessWidget {
           elevation: 10,
           child: Padding(
             padding: const EdgeInsets.all(10),
-            child: title == "Humedad"
-                ? const Icon(color: Colors.white, Icons.water_drop)
-                : title == "Temperatura"
-                    ? const Icon(color: Colors.white, Icons.device_thermostat)
-                    : const Icon(color: Colors.white, Icons.battery_5_bar),
+            child: getTitleIcon(title),
           ),
         ),
         Padding(
@@ -195,6 +191,67 @@ Widget getVerticalList(List<Measure> lastMeasures, List<UserLimit> limits) {
   );
 }
 
+Icon getTitleIcon(String title) {
+  Icon icon = const Icon(color: Colors.white, Icons.battery_5_bar);
+  switch (title) {
+    case "Humedad":
+      icon = const Icon(color: Colors.white, Icons.water_drop);
+      break;
+    case "Luz":
+      icon = const Icon(color: Colors.white, Icons.sunny);
+      break;
+    case "Presión":
+      icon = const Icon(color: Colors.white, Icons.vertical_align_center);
+      break;
+    case "H. Suelo":
+      icon = const Icon(color: Colors.white, Icons.grid_on);
+      break;
+    case "Lluvia":
+      icon = const Icon(color: Colors.white, Icons.cloud);
+      break;
+    case "Altitud":
+      icon = const Icon(color: Colors.white, Icons.landscape);
+      break;
+    case "Temperatura":
+      icon = const Icon(color: Colors.white, Icons.device_thermostat);
+      break;
+    default:
+  }
+  return icon;
+}
+
+String translateTitle(String title) {
+  String translatedTitle = "";
+  switch (title) {
+    case "humidity":
+      translatedTitle = "Humedad";
+      break;
+    case "light":
+      translatedTitle = "Luz";
+      break;
+    case "pressure":
+      translatedTitle = "Presión";
+      break;
+    case "soilMoisture":
+      translatedTitle = "H. Suelo";
+      break;
+    case "rain":
+      translatedTitle = "Lluvia";
+      break;
+    case "battery":
+      translatedTitle = "Batería";
+      break;
+    case "altitude":
+      translatedTitle = "Altitud";
+      break;
+    case "temperature":
+      translatedTitle = "Temperatura";
+      break;
+    default:
+  }
+  return translatedTitle;
+}
+
 Widget getVerticalIcon(Measure lastMeasure, Map<String, UserLimit> limitsMap) {
   Map<dynamic, dynamic> measureMap = lastMeasure.toJson();
   measureMap.removeWhere(
@@ -203,6 +260,7 @@ Widget getVerticalIcon(Measure lastMeasure, Map<String, UserLimit> limitsMap) {
   for (var keys in measureMap.keys) {
     mapKeys.add(keys);
   }
+  mapKeys.sort(((a, b) => translateTitle(a).compareTo(translateTitle(b))));
   return SizedBox(
     height: SizeConfig.blockSizeVertical * 25,
     width: SizeConfig.blockSizeHorizontal * 79,
@@ -225,8 +283,8 @@ Widget getVerticalIcon(Measure lastMeasure, Map<String, UserLimit> limitsMap) {
                       DashboardIcon(
                           measure: measureMap[mapKeys[index * 2]] as double,
                           limit: limitsMap[mapKeys[index * 2]]!,
-                          title: mapKeys[index * 2],
-                          goodColor: Colors.blue,
+                          title: translateTitle(mapKeys[index * 2]),
+                          goodColor: Color(0xFF0798A5),
                           badColor: Colors.red),
                     ],
                   ),
@@ -242,8 +300,8 @@ Widget getVerticalIcon(Measure lastMeasure, Map<String, UserLimit> limitsMap) {
                                 measure: measureMap[mapKeys[index * 2 + 1]]
                                     as double,
                                 limit: limitsMap[mapKeys[index * 2 + 1]]!,
-                                title: mapKeys[index * 2 + 1],
-                                goodColor: Colors.yellow,
+                                title: translateTitle(mapKeys[index * 2 + 1]),
+                                goodColor: Color(0xFF0798A5),
                                 badColor: Colors.red),
                           ],
                         ),
