@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lora_monitor/infraestructure/dashboards/user_limits_repo.dart';
 import 'core/size_config.dart';
 
 enum NavigationState {
@@ -59,19 +60,20 @@ class MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    Widget currentPage = Text("home");
+    Widget currentPage;
 
     switch (navState) {
       case NavigationState.home:
         changeTitle("Mediciones más recientes");
-        //currentPage = const LastMeasuresStream();
+        currentPage = Text("home");
         break;
       case NavigationState.settings:
         changeTitle("Configuración de alertas");
-        //currentPage = const SettingsStream();
+        currentPage = UserLimitsRepo();
         break;
       case NavigationState.measures:
         changeTitle("Recolección de datos");
+        currentPage = Text("home");
         //currentPage = const APSensorRepo();
         break;
     }
