@@ -8,7 +8,7 @@ cred = credentials.Certificate("key.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-sensors = ["sensorOne"]
+sensors = ["sensorOne", "sensorTwo", "sensorThree", "sensorFour"]
 for sensor in sensors:
     for day in range(1, 2): 
         for hour in range(0, 24):

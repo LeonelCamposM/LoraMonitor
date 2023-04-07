@@ -36,7 +36,7 @@ class Measure {
       json['sensorName'] as String,
       json['date'] as Timestamp);
 
-  Map<dynamic, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         'temperature': temperature,
         'pressure': pressure,
         'altitude': altitude,

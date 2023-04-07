@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lora_monitor/infraestructure/dashboard_stream.dart';
 import 'package:lora_monitor/infraestructure/settings/user_limits_stream.dart';
+import 'package:lora_monitor/presentation/chart/chart_view.dart';
 import 'core/size_config.dart';
 
 enum NavigationState {
@@ -41,6 +42,7 @@ class MyHomePage extends StatefulWidget {
     super.key,
   });
   String title = "";
+  String sensorName = "sensorOne";
 
   @override
   State<MyHomePage> createState() => MyHomePageState();
@@ -63,9 +65,10 @@ class MyHomePageState extends State<MyHomePage> {
 
   void changePage(HomeState page, String sensorName) {
     setState(() {
-      print(sensorName);
+      widget.sensorName = sensorName;
       homState = page;
     });
+    print(widget.sensorName);
   }
 
   @override
@@ -82,7 +85,7 @@ class MyHomePageState extends State<MyHomePage> {
             break;
           case HomeState.chart:
             changeTitle("Gráficos de mediciones");
-            currentPage = const Text("chart");
+            currentPage = ChartView(sensorName: widget.sensorName);
             break;
         }
         break;
