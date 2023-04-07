@@ -68,7 +68,6 @@ class MyHomePageState extends State<MyHomePage> {
       widget.sensorName = sensorName;
       homState = page;
     });
-    print(widget.sensorName);
   }
 
   @override

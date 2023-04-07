@@ -36,6 +36,7 @@ dependencies:
   intl: ^0.18.0
   cloud_firestore: ^4.5.0
   google_fonts: ^4.0.3
+  syncfusion_flutter_charts: ^21.1.38
 
 dev_dependencies:
   flutter_test:

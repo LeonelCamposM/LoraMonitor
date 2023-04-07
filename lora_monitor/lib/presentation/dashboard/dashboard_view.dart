@@ -118,14 +118,14 @@ Widget getVerticalList(
   return SizedBox(
     height: SizeConfig.blockSizeVertical * 85,
     child: ListView(
-        reverse: true,
+        reverse: false,
         scrollDirection: Axis.vertical,
         children: List.generate(
           lastMeasures.length,
           (index) => Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: SizedBox(
-              height: SizeConfig.blockSizeVertical * 40,
+              height: SizeConfig.blockSizeVertical * 45,
               width: SizeConfig.blockSizeHorizontal * 100,
               child: GestureDetector(
                 onTap: () => {
@@ -151,6 +151,9 @@ Widget getVerticalList(
                                     getBodyText(
                                         " ${DateFormat('dd MMMM', 'es').format(lastMeasures[index].date.toDate()).replaceAll(" ", " de ")}"
                                         " ${DateFormat(DateFormat.jm().pattern).format(lastMeasures[index].date.toDate())}",
+                                        false),
+                                    getBodyText(
+                                        "Sensor: ${lastMeasures[index].sensorName}",
                                         false),
                                     Column(
                                       crossAxisAlignment:
