@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lora_monitor/infraestructure/dashboard_stream.dart';
+import 'package:lora_monitor/infraestructure/dashboard/dashboard_stream.dart';
 import 'package:lora_monitor/infraestructure/settings/user_limits_stream.dart';
 import 'package:lora_monitor/presentation/chart/chart_view.dart';
 import 'core/size_config.dart';
@@ -50,7 +50,7 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage> {
   NavigationState navState = NavigationState.home;
-  HomeState homState = HomeState.dashboard;
+  HomeState homeState = HomeState.dashboard;
 
   @override
   void initState() {
@@ -66,7 +66,7 @@ class MyHomePageState extends State<MyHomePage> {
   void changePage(HomeState page, String sensorName) {
     setState(() {
       widget.sensorName = sensorName;
-      homState = page;
+      homeState = page;
     });
   }
 
@@ -77,7 +77,7 @@ class MyHomePageState extends State<MyHomePage> {
 
     switch (navState) {
       case NavigationState.home:
-        switch (homState) {
+        switch (homeState) {
           case HomeState.dashboard:
             changeTitle("Mediciones más recientes");
             currentPage = DashboardStream(changePage: changePage);
@@ -100,7 +100,7 @@ class MyHomePageState extends State<MyHomePage> {
     }
 
     return Scaffold(
-      appBar: homState != HomeState.chart
+      appBar: homeState != HomeState.chart
           ? AppBar(
               title: Text(widget.title),
             )
