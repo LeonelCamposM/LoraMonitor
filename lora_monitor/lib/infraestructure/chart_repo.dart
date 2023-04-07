@@ -14,9 +14,12 @@ class ChartRepo {
         );
   }
 
-  Future<List<Measure>> getChartData(String sensorName) async {
+  Future<List<Measure>> getChartData(
+      String sensorName, DateTime fromDate, DateTime toDate) async {
     final collection = await _chartCollection
         .where("sensorName", isEqualTo: sensorName)
+        .where("date", isGreaterThanOrEqualTo: fromDate)
+        .where("date", isLessThanOrEqualTo: toDate)
         .orderBy("date", descending: true)
         .get();
     var data = collection.docs.map((snapshot) => snapshot.data());
