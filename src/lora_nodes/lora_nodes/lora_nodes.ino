@@ -2,11 +2,12 @@
 #include <ArduinoJson.h>
 
 #define DEBUG
-// #define SENSOR_NODE
+#define SENSOR_NODE
 #define uS_TO_S_FACTOR 1000000
 #define TIME_TO_SLEEP 2000
 
 bool start_lora = false;
+String sensorName = "sensorTwo";
 
 void goToSleep() {
   esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
@@ -36,7 +37,7 @@ void setup() {
     message["light"] = "24.8";
     message["rain"] = "1.89";
     message["soilMoisture"] = "80.9";
-    message["sensorName"] = "sensorOne";
+    message["sensorName"] = sensorName;
     String jsonString;
     serializeJson(message, jsonString);
     sendAckLora(String(jsonString));
@@ -46,7 +47,8 @@ void setup() {
   goToSleep();
 #else
   start_lora = startLora();
-  // setupAPMode();
+  setupRTC();
+  setupAPMode();
 #endif
 }
 

@@ -107,7 +107,7 @@ void handleRequest(int packetSize, String date) {
 
   bool validPacket = validatePacket(packet);
   if (validPacket) {
-    //saveData(MEASURE_PATH, packet, date);
+    saveData(MEASURE_PATH, packet, date);
     sendLora("ACK");
 #ifdef DEBUG
     Serial.println("Recieved " + messageSize + " bytes");
@@ -122,8 +122,7 @@ String receiveLora() {
     packet = "";
     int packetSize = LoRa.parsePacket();
     if (packetSize) {
-      // String date = getTime();
-      String date = "today";
+      String date = getTime();
       handleRequest(packetSize, date);
       break;
     }
