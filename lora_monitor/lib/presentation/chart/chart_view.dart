@@ -146,7 +146,6 @@ class _ChartViewState extends State<ChartView> {
 
   void onMeasureSelected(String selectedMeasure) {
     chartData.clear();
-    print(currentMeasure + "  ||  " + selectedMeasure);
     switch (selectedMeasure) {
       case "Humedad":
         for (var element in sensorMeasures) {
