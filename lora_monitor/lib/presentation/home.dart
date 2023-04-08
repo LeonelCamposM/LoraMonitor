@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lora_monitor/infraestructure/dashboard_stream.dart';
+import 'package:lora_monitor/infraestructure/dashboard/dashboard_stream.dart';
 import 'package:lora_monitor/infraestructure/settings/user_limits_stream.dart';
+import 'package:lora_monitor/presentation/chart/chart_view.dart';
 import 'core/size_config.dart';
 
 enum NavigationState {
@@ -8,6 +9,8 @@ enum NavigationState {
   measures,
   settings,
 }
+
+enum HomeState { dashboard, chart }
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -39,6 +42,7 @@ class MyHomePage extends StatefulWidget {
     super.key,
   });
   String title = "";
+  String sensorName = "sensorOne";
 
   @override
   State<MyHomePage> createState() => MyHomePageState();
@@ -46,6 +50,7 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage> {
   NavigationState navState = NavigationState.home;
+  HomeState homeState = HomeState.dashboard;
 
   @override
   void initState() {
@@ -58,6 +63,13 @@ class MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void changePage(HomeState page, String sensorName) {
+    setState(() {
+      widget.sensorName = sensorName;
+      homeState = page;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -65,8 +77,16 @@ class MyHomePageState extends State<MyHomePage> {
 
     switch (navState) {
       case NavigationState.home:
-        changeTitle("Mediciones más recientes");
-        currentPage = const DashboardStream();
+        switch (homeState) {
+          case HomeState.dashboard:
+            changeTitle("Mediciones más recientes");
+            currentPage = DashboardStream(changePage: changePage);
+            break;
+          case HomeState.chart:
+            changeTitle("Gráficos de mediciones");
+            currentPage = ChartView(sensorName: widget.sensorName);
+            break;
+        }
         break;
       case NavigationState.settings:
         changeTitle("Configuración de alertas");
@@ -80,9 +100,17 @@ class MyHomePageState extends State<MyHomePage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: homeState != HomeState.chart
+          ? AppBar(
+              title: Text(widget.title),
+            )
+          : AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => changePage(HomeState.dashboard, ""),
+              ),
+              title: Text(widget.title),
+            ),
       body: currentPage,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

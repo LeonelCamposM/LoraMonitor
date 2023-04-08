@@ -6,7 +6,8 @@ import 'package:lora_monitor/presentation/core/loading.dart';
 import 'package:lora_monitor/presentation/dashboard/dashboard_view.dart';
 
 class DashboardStream extends StatelessWidget {
-  const DashboardStream({super.key});
+  const DashboardStream({super.key, required this.changePage});
+  final Function changePage;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,10 @@ class DashboardStream extends StatelessWidget {
               measureList
                   .add(Measure.fromJson(doc.data() as Map<dynamic, dynamic>));
             }
-            return DashboardView(measure: measureList, limits: userLimits);
+            return DashboardView(
+                measure: measureList,
+                limits: userLimits,
+                changePage: changePage);
           },
         );
       },
