@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lora_monitor/domain/measure.dart';
+import 'package:lora_monitor/presentation/chart/dropdown.dart';
 import 'package:lora_monitor/presentation/core/loading.dart';
+import 'package:lora_monitor/presentation/dashboard/dashboard_view.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../infraestructure/chart_repo.dart';
 import '../core/size_config.dart';
@@ -17,11 +19,14 @@ class ChartView extends StatefulWidget {
 
 class _ChartViewState extends State<ChartView> {
   List<Measure> sensorMeasures = [];
+  List<ChartData> chartData = [];
+  List<String> options = [];
+  String currentMeasure = "";
   bool oneDay = true;
   bool oneWeek = false;
   bool oneMonth = false;
   bool loading = true;
-  List<ChartData> chartData = [];
+  bool firstLoad = true;
 
   void loadData(DateTime fromDate, DateTime toDate) async {
     ChartRepo repo = ChartRepo();
@@ -30,6 +35,17 @@ class _ChartViewState extends State<ChartView> {
     setState(() {
       sensorMeasures = measures;
       loading = false;
+      if (sensorMeasures.isNotEmpty) {
+        Map<String, dynamic> measureMap = sensorMeasures.first.toJson();
+        measureMap.removeWhere((key, value) =>
+            value == -1.01 || (key == "sensorName" || key == "date"));
+        options = measureMap.keys.toList();
+        for (var i = 0; i < options.length; i++) {
+          options[i] = translateTitle(options[i]);
+        }
+        if (firstLoad) currentMeasure = options.first;
+        firstLoad = false;
+      }
     });
     initialFormat();
   }
@@ -114,9 +130,9 @@ class _ChartViewState extends State<ChartView> {
   void initialFormat() {
     List<DateTime> days = [];
     if (sensorMeasures.isNotEmpty) {
+      onMeasureSelected(currentMeasure);
       for (var element in sensorMeasures) {
         DateTime date = element.date.toDate();
-        chartData.add(ChartData(date, element.humidity.toDouble()));
         days.add(date);
       }
       chartData.sort((a, b) {
@@ -126,6 +142,65 @@ class _ChartViewState extends State<ChartView> {
       oneWeek = isSameWeek(days);
       oneMonth = isSameMonth(days);
     }
+  }
+
+  void onMeasureSelected(String selectedMeasure) {
+    chartData.clear();
+    print(currentMeasure + "  ||  " + selectedMeasure);
+    switch (selectedMeasure) {
+      case "Humedad":
+        for (var element in sensorMeasures) {
+          DateTime date = element.date.toDate();
+          chartData.add(ChartData(date, element.humidity.toDouble()));
+        }
+        break;
+      case "H. Suelo":
+        for (var element in sensorMeasures) {
+          DateTime date = element.date.toDate();
+          chartData.add(ChartData(date, element.soilMoisture.toDouble()));
+        }
+        break;
+      case "Temperatura":
+        for (var element in sensorMeasures) {
+          DateTime date = element.date.toDate();
+          chartData.add(ChartData(date, element.temperature.toDouble()));
+        }
+        break;
+      case "Presión":
+        for (var element in sensorMeasures) {
+          DateTime date = element.date.toDate();
+          chartData.add(ChartData(date, element.pressure.toDouble()));
+        }
+        break;
+      case "Altitud":
+        for (var element in sensorMeasures) {
+          DateTime date = element.date.toDate();
+          chartData.add(ChartData(date, element.altitude.toDouble()));
+        }
+        break;
+      case "Luz":
+        for (var element in sensorMeasures) {
+          DateTime date = element.date.toDate();
+          chartData.add(ChartData(date, element.light.toDouble()));
+        }
+        break;
+      case "Lluvia":
+        for (var element in sensorMeasures) {
+          DateTime date = element.date.toDate();
+          chartData.add(ChartData(date, element.rain.toDouble()));
+        }
+        break;
+      case "Batería":
+        for (var element in sensorMeasures) {
+          DateTime date = element.date.toDate();
+          chartData.add(ChartData(date, element.battery.toDouble()));
+        }
+        break;
+      default:
+    }
+    setState(() {
+      currentMeasure = selectedMeasure;
+    });
   }
 
   @override
@@ -156,6 +231,11 @@ class _ChartViewState extends State<ChartView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              Center(
+                  child: DropdownCustomButton(
+                      options: options,
+                      onChanged: onMeasureSelected,
+                      selectedValue: currentMeasure)),
               SizedBox(
                   width: SizeConfig.blockSizeHorizontal * 90,
                   height: SizeConfig.blockSizeVertical * 50,
@@ -173,7 +253,7 @@ class _ChartViewState extends State<ChartView> {
                               borderColor: Colors.blue),
                           series: <ChartSeries<ChartData, DateTime>>[
                             LineSeries<ChartData, DateTime>(
-                                name: "Día Humedad del suelo",
+                                name: currentMeasure,
                                 dataSource: chartData,
                                 xValueMapper: (ChartData data, _) => data.x,
                                 yValueMapper: (ChartData data, _) => data.y),
@@ -193,7 +273,7 @@ class _ChartViewState extends State<ChartView> {
                                   borderColor: Colors.blue),
                               series: <ChartSeries<ChartData, DateTime>>[
                                 LineSeries<ChartData, DateTime>(
-                                    name: "Semana Humedad del suelo ",
+                                    name: currentMeasure,
                                     dataSource: chartData,
                                     xValueMapper: (ChartData data, _) => data.x,
                                     yValueMapper: (ChartData data, _) =>
@@ -213,7 +293,7 @@ class _ChartViewState extends State<ChartView> {
                                   borderColor: Colors.blue),
                               series: <ChartSeries<ChartData, DateTime>>[
                                 LineSeries<ChartData, DateTime>(
-                                    name: "Mes Humedad del suelo",
+                                    name: currentMeasure,
                                     dataSource: chartData,
                                     xValueMapper: (ChartData data, _) => data.x,
                                     yValueMapper: (ChartData data, _) =>
