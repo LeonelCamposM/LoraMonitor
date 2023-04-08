@@ -32,4 +32,18 @@ class ChartRepo {
 
     return chartData;
   }
+
+  void addMeasure(Measure measure) async {
+    var ref = FirebaseFirestore.instance
+      .collection("/users/yuY2SQJgcOYgPUKvUdRx/measures/")
+      .doc();
+      ref.set(measure.toJson());
+  }
+
+  void addLastMeasure(Measure measure) async {
+    var ref = FirebaseFirestore.instance
+      .collection("/users/yuY2SQJgcOYgPUKvUdRx/measures/")
+      .doc(measure.sensorName);
+      ref.set(measure.toJson());
+  }
 }
