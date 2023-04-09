@@ -7,7 +7,7 @@
 #define TIME_TO_SLEEP 2000
 
 bool start_lora = false;
-String sensorName = "sensorTwo";
+String sensorName = "sensorOne";
 
 void goToSleep() {
   esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
@@ -34,9 +34,9 @@ void setup() {
     message["battery"] = 23.1;
     message["humidity"] = 22.1;
     message["date"] = "today";
-    message["light"] = "24.8";
-    message["rain"] = "1.89";
-    message["soilMoisture"] = "80.9";
+    message["light"] = 24.8;
+    message["rain"] = 1.89;
+    message["soilMoisture"] = 80.9;
     message["sensorName"] = sensorName;
     String jsonString;
     serializeJson(message, jsonString);

@@ -61,21 +61,21 @@ class _ConnectedDashboardState extends State<ConnectedDashboard> {
     httpClient.close();
 
     List<Measure> measures = [];
+    List<Measure> lastMeasures = [];
+    print("Messagges: \n");
     for (var message in messages) {
-      message = message.replaceAll(";", "");
-      Map map = jsonDecode(message);
-      Measure measure = Measure.fromJson(map);
-      measures.add(measure);
-    }
-    measures.sort((measureOne, measureTwo) =>
-        measureOne.sensorName.compareTo(measureTwo.sensorName));
-    measures.sort(
-        (measureOne, measureTwo) => measureOne.date.compareTo(measureTwo.date));
-    if (measures.isNotEmpty) {
-      for (var measure in measures) {
-        print(measure.toString());
-        print("\n");
+      if (message == "/") {
+        lastMeasures.add(measures.last);
+      } else {
+        message = message.replaceAll(";", "");
+        print(message + "\n");
+        Map map = jsonDecode(message);
+        Measure measure = Measure.fromServer(map);
+        measures.add(measure);
       }
+    }
+
+    if (lastMeasures.isNotEmpty) {
       //chartRepo.addLastMeasure(measures.last);
     }
     return measures;
@@ -98,7 +98,7 @@ class _ConnectedDashboardState extends State<ConnectedDashboard> {
   void uploadNewMeasures(context) async {
     measures = await getNewMeasures();
     //for (var element in measures) {
-      // chartRepo.addMeasure(element);
+    // chartRepo.addMeasure(element);
     //}
     //sendDeleteData();
     if (measures.isNotEmpty) {
