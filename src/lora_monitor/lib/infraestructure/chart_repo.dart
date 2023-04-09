@@ -34,18 +34,16 @@ class ChartRepo {
 
   void addMeasure(Measure measure) async {
     print(measure.toJson());
-    // var ref = FirebaseFirestore.instance
-    //   .collection("/users/yuY2SQJgcOYgPUKvUdRx/measures2/")
-    //   .doc();
-    //   ref.set(measure.toJson());
+    var ref = FirebaseFirestore.instance
+        .collection("/users/yuY2SQJgcOYgPUKvUdRx/measures/")
+        .doc();
+    ref.set(measure.toJson());
   }
 
   void addLastMeasure(Measure measure) async {
-    print(measure.date.runtimeType);
-    print(measure.toJson());
-    // var ref = FirebaseFirestore.instance
-    //   .collection("/users/yuY2SQJgcOYgPUKvUdRx/lastMeasures2/")
-    //   .doc(measure.sensorName);
-    //   ref.set(measure.toJson());
+    var ref = FirebaseFirestore.instance
+        .collection("/users/yuY2SQJgcOYgPUKvUdRx/lastMeasures/")
+        .doc(measure.sensorName);
+    ref.set(measure.toJson());
   }
 }
