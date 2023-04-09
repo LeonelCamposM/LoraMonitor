@@ -24,6 +24,18 @@ class Measure {
       this.sensorName,
       this.date);
 
+  factory Measure.fromServer(Map<dynamic, dynamic> json) => Measure(
+      json['temperature'] as double,
+      json['pressure'] as double,
+      json['altitude'] as double,
+      json['battery'] as double,
+      json['humidity'] as double,
+      json['rain'] as double,
+      json['light'] as double,
+      json['soilMoisture'] as double,
+      json['sensorName'] as String,
+      Timestamp.fromDate(DateTime.parse(json['date'])));
+
   factory Measure.fromJson(Map<dynamic, dynamic> json) => Measure(
       json['temperature'] as double,
       json['pressure'] as double,
@@ -46,6 +58,6 @@ class Measure {
         'light': light,
         'soilMoisture': soilMoisture,
         'sensorName': sensorName,
-        'date': date.toString()
+        'date': date
       };
 }

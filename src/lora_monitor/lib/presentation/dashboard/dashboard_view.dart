@@ -253,9 +253,10 @@ Widget getVerticalIcon(Measure lastMeasure, Map<String, UserLimit> limitsMap) {
   }
   mapKeys.sort(((a, b) => translateTitle(a).compareTo(translateTitle(b))));
   return SizedBox(
-    height: SizeConfig.blockSizeVertical * 30,
+    height: SizeConfig.blockSizeVertical * 33,
     width: SizeConfig.blockSizeHorizontal * 79,
     child: ListView(
+        physics: const NeverScrollableScrollPhysics(),
         reverse: false,
         scrollDirection: Axis.vertical,
         children: List.generate(

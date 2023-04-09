@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../domain/measure.dart';
+import 'package:lora_monitor/domain/measure.dart';
 
 class ChartRepo {
   late final CollectionReference<Measure> _chartCollection;
@@ -31,5 +30,20 @@ class ChartRepo {
     }
 
     return chartData;
+  }
+
+  void addMeasure(Measure measure) async {
+    print(measure.toJson());
+    var ref = FirebaseFirestore.instance
+        .collection("/users/yuY2SQJgcOYgPUKvUdRx/measures/")
+        .doc();
+    ref.set(measure.toJson());
+  }
+
+  void addLastMeasure(Measure measure) async {
+    var ref = FirebaseFirestore.instance
+        .collection("/users/yuY2SQJgcOYgPUKvUdRx/lastMeasures/")
+        .doc(measure.sensorName);
+    ref.set(measure.toJson());
   }
 }

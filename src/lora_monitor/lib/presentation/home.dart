@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lora_monitor/infraestructure/dashboard/dashboard_stream.dart';
 import 'package:lora_monitor/infraestructure/settings/user_limits_stream.dart';
+import 'package:lora_monitor/presentation/ap_sensor/ap_sensor_repo.dart';
 import 'package:lora_monitor/presentation/chart/chart_view.dart';
 import 'core/size_config.dart';
 
@@ -94,8 +95,8 @@ class MyHomePageState extends State<MyHomePage> {
         break;
       case NavigationState.measures:
         changeTitle("Recolección de datos");
-        currentPage = const Text("home");
-        //currentPage = const APSensorRepo();
+        //currentPage = const Text("home");
+        currentPage = const APSensorRepo();
         break;
     }
 
