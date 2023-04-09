@@ -14,8 +14,8 @@ AsyncWebServer server(80);
 void startHttpServer() {
 
   server.on("/deleteAllData", HTTP_GET, [](AsyncWebServerRequest* request) {
-    bool response = remove_file("/" + sensorNames[0]) && remove_file("/" +sensorNames[1]) && remove_file("/" +sensorNames[2]) 
-                    && remove_file("/" +sensorNames[3]) && remove_file("/" +sensorNames[4]);
+    bool response = remove_file("/" + sensorNames[0]) || remove_file("/" +sensorNames[1]) || remove_file("/" +sensorNames[2]) 
+                    || remove_file("/" +sensorNames[3]) || remove_file("/" +sensorNames[4]);
     if (response) {
       request->send(200, "text/plain", "ok");
 #ifdef DEBUG

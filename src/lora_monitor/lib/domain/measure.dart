@@ -32,7 +32,7 @@ class Measure {
       json['humidity'] as double,
       json['rain'] as double,
       json['light'] as double,
-      json['soilMoisture'] as double,
+      (json['soilMoisture'] as num).toDouble(),
       json['sensorName'] as String,
       Timestamp.fromDate(DateTime.parse(json['date'])));
 

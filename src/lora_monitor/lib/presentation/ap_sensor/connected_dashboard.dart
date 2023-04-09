@@ -73,7 +73,7 @@ class _ConnectedDashboardState extends State<ConnectedDashboard> {
       for (var element in measures) {
         chartRepo.addMeasure(element);
       }
-      //sendDeleteData();
+      sendDeleteData();
     }
     setState(() {
       loading = false;

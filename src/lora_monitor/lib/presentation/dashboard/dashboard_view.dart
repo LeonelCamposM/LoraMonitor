@@ -149,8 +149,7 @@ Widget getVerticalList(
                                 Column(
                                   children: [
                                     getBodyText(
-                                        " ${DateFormat('dd MMMM', 'es').format(lastMeasures[index].date.toDate()).replaceAll(" ", " de ")}"
-                                        " ${DateFormat(DateFormat.jm().pattern).format(lastMeasures[index].date.toDate())}",
+                                        " ${lastMeasures[index].date.toDate()}",
                                         false),
                                     getBodyText(
                                         "Sensor: ${lastMeasures[index].sensorName}",

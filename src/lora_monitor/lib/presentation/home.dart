@@ -4,6 +4,7 @@ import 'package:lora_monitor/infraestructure/settings/user_limits_stream.dart';
 import 'package:lora_monitor/presentation/ap_sensor/ap_sensor_repo.dart';
 import 'package:lora_monitor/presentation/chart/chart_view.dart';
 import 'core/size_config.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 enum NavigationState {
   home,
@@ -19,14 +20,6 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      localizationsDelegates: const [
-        DefaultMaterialLocalizations.delegate,
-        DefaultWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', 'US'),
-        Locale('es', 'ES'),
-      ],
       title: 'PlantMonitor',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
