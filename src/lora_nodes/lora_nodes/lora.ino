@@ -10,7 +10,8 @@
 #define DI0 26   // GPIO26 -- SX1278's IRQ(Interrupt Request)
 #define BAND 903E6
 
-#define MEASURE_PATH "/measure_data.txt"
+
+String measurePath = "";
 
 String rssi = "RSSI --";
 String messageSize = "--";
@@ -59,6 +60,7 @@ bool validatePacket(String packet) {
   // Validate date and sensorName
   bool validateDate = date.length() > 0;
   bool validateSensorName = sensorName.length() > 0;
+  measurePath = sensorName;
 
   // Validate light, rain and soilMoisture
   bool validateLight = light >= 0 && light <= 100;
@@ -107,7 +109,8 @@ void handleRequest(int packetSize, String date) {
 
   bool validPacket = validatePacket(packet);
   if (validPacket) {
-    saveData(MEASURE_PATH, packet, date);
+    Serial.println(measurePath);
+    saveData("/" + measurePath, packet, date);
     sendLora("ACK");
 #ifdef DEBUG
     Serial.println("Recieved " + messageSize + " bytes");

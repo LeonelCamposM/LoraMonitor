@@ -7,12 +7,15 @@
 #define MEASURE_PATH "/measure_data.txt"
 const char* PARAM_MESSAGE = "limits";
 
+String sensorNames[5] = { "sensorOne", "sensorTwo", "sensorThree", "sensorFour", "sensorFive" };
+
 AsyncWebServer server(80);
 
 void startHttpServer() {
 
   server.on("/deleteAllData", HTTP_GET, [](AsyncWebServerRequest* request) {
-    bool response = remove_file(MEASURE_PATH);
+    bool response = remove_file("/" + sensorNames[0]) && remove_file("/" +sensorNames[1]) && remove_file("/" +sensorNames[2]) 
+                    && remove_file("/" +sensorNames[3]) && remove_file("/" +sensorNames[4]);
     if (response) {
       request->send(200, "text/plain", "ok");
 #ifdef DEBUG
@@ -27,7 +30,22 @@ void startHttpServer() {
   });
 
   server.on("/getAllData", HTTP_GET, [](AsyncWebServerRequest* request) {
-    request->send(200, "text/plain", getAllData(MEASURE_PATH));
+    String response = "";
+    String data =  getAllData( "/" + sensorNames[0]);
+    response = data == "" ? "" : data + "/\n";
+    data =  getAllData("/" + sensorNames[1]);
+    response += data == "" ? "" : data + "/\n";
+    data =  getAllData("/" + sensorNames[2]);
+    response += data == "" ? "" : data + "/\n";
+    data =  getAllData("/" + sensorNames[3]);
+    response += data == "" ? "" : data + "/\n";
+    data =  getAllData("/" + sensorNames[4]);
+    response += data == "" ? "" : data + "/\n";
+    if(response == ""){
+      request->send(404, "text/plain", "error");
+    } else{
+      request->send(200, "text/plain", response);
+    }
 #ifdef DEBUG
     Serial.println("[Server] readed all data");
 #endif

@@ -8,7 +8,6 @@
 #define SD_SCK 14
 #define SD_MOSI 15
 #define SD_MISO 2
-#define MEASURE_PATH "/measure_data.txt"
 
 SPIClass sd_spi(HSPI);
 
@@ -38,6 +37,9 @@ void saveData(String path, String data, String time) {
     }
     data += ";";
     File dataFile;
+    Serial.println("Guardando datos");
+    Serial.println(path);
+    Serial.println(data);
     if (SD.exists(path) && time != "") {
       dataFile = SD.open(path, "a");
     } else {
