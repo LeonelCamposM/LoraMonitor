@@ -1,16 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:lora_monitor/presentation/ap_sensor/connected_dashboard.dart';
 import 'package:lora_monitor/presentation/ap_sensor/disconnected_dashboard.dart';
 import 'package:lora_monitor/presentation/core/size_config.dart';
-
-import 'package:lora_monitor/domain/measure.dart';
-
-
 
 // ignore: must_be_immutable
 class APSensorRepo extends StatefulWidget {
@@ -24,46 +18,6 @@ class APSensorMeasureRepoState extends State<APSensorRepo> {
   Timer? timer;
   bool conected = false;
   int counter = 0;
-
-  Future<List<Measure>> getNewMeasures() async {
-    List<String> messages = [];
-    var httpClient = HttpClient();
-    var request =
-        await httpClient.getUrl(Uri.parse('http://192.168.1.22:80/getAllData'));
-    var response = await request.close();
-    await for (var line
-        in response.transform(utf8.decoder).transform(const LineSplitter())) {
-      messages.add(line);
-    }
-    httpClient.close();
-
-    List<Measure> measures = [];
-    for (var message in messages) {
-      message = message.replaceAll(";", "");
-      Map map = jsonDecode(message);
-      Measure measure = Measure.fromJson(map);
-      measures.add(measure);
-    }
-    if (measures.isNotEmpty) {
-      print(measures.last);
-      //addLastMeasure(measures.last);
-    }
-    return measures;
-  }
-
-  void sendDeleteData() async {
-    try {
-      final response = await http.get(
-        Uri.parse('http://192.168.1.22:80/deleteAllData'),
-      );
-      if (response.statusCode == 200) {
-        print("data deleted");
-      }
-    } catch (e) {
-      print("catch");
-      print(e);
-    }
-  }
 
   void getUpdatedValue() async {
     try {
@@ -112,7 +66,6 @@ class APSensorMeasureRepoState extends State<APSensorRepo> {
   @override
   void initState() {
     getUpdatedValue();
-    //getNewMeasures();
     super.initState();
     timer = Timer.periodic(
         const Duration(seconds: 1), (Timer t) => getUpdatedValue());
@@ -141,7 +94,7 @@ class APSensorMeasureRepoState extends State<APSensorRepo> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Column(
-                children: [
+                children: [ 
                   SizedBox(
                     height: SizeConfig.blockSizeHorizontal * 3,
                   ),

@@ -20,35 +20,7 @@ class _ConnectedDashboardState extends State<ConnectedDashboard> {
   ChartRepo chartRepo = ChartRepo();
   bool loading;
 
-  Future<void> setTime() async {
-    DateTime now = DateTime.now();
-    int hour = now.hour;
-    int minute = now.minute;
-    int second = now.second;
-    int day = now.day;
-    int month = now.month;
-    int year = now.year;
-
-    final url = Uri.parse('http://192.168.1.22/setTime');
-    Map<String, dynamic> body = {
-      'hour': hour,
-      'minute': minute,
-      'second': second,
-      'day': day,
-      'month': month,
-      'year': year,
-    };
-
-    String jsonString = json.encode(body);
-    final response = await http.post(url, body: {'date': jsonString});
-    if (response.statusCode == 200) {
-      print('Hora y fecha actualizadas correctamente');
-    } else {
-      print('ya estaban bien');
-    }
-  }
-
-  Future<List<Measure>> getNewMeasures() async {
+  Future<void> getNewMeasures() async {
     List<String> messages = [];
     var httpClient = HttpClient();
     var request =
@@ -60,25 +32,25 @@ class _ConnectedDashboardState extends State<ConnectedDashboard> {
     }
     httpClient.close();
 
-    List<Measure> measures = [];
-    List<Measure> lastMeasures = [];
-    print("Messagges: \n");
-    for (var message in messages) {
-      if (message == "/") {
-        lastMeasures.add(measures.last);
-      } else {
-        message = message.replaceAll(";", "");
-        print(message + "\n");
-        Map map = jsonDecode(message);
-        Measure measure = Measure.fromServer(map);
-        measures.add(measure);
+    if (messages.first != "error") {
+      List<Measure> lastMeasures = [];
+      for (var message in messages) {
+        if (message == "/") {
+          lastMeasures.add(measures.last);
+        } else {
+          message = message.replaceAll(";", "");
+          Map map = jsonDecode(message);
+          Measure measure = Measure.fromServer(map);
+          measures.add(measure);
+        }
+      }
+
+      if (lastMeasures.isNotEmpty) {
+        for (var lastSensorMeasure in lastMeasures) {
+          chartRepo.addLastMeasure(lastSensorMeasure);
+        }
       }
     }
-
-    if (lastMeasures.isNotEmpty) {
-      //chartRepo.addLastMeasure(measures.last);
-    }
-    return measures;
   }
 
   void sendDeleteData() async {
@@ -96,15 +68,13 @@ class _ConnectedDashboardState extends State<ConnectedDashboard> {
   }
 
   void uploadNewMeasures(context) async {
-    measures = await getNewMeasures();
-    //for (var element in measures) {
-    // chartRepo.addMeasure(element);
-    //}
-    //sendDeleteData();
+    await getNewMeasures();
     if (measures.isNotEmpty) {
-    } else {}
-
-    setTime();
+      for (var element in measures) {
+        chartRepo.addMeasure(element);
+      }
+      //sendDeleteData();
+    }
     setState(() {
       loading = false;
     });

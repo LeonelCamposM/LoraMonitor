@@ -58,6 +58,6 @@ class Measure {
         'light': light,
         'soilMoisture': soilMoisture,
         'sensorName': sensorName,
-        'date': date.toString()
+        'date': date
       };
 }

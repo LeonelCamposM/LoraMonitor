@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../domain/measure.dart';
+import 'package:lora_monitor/domain/measure.dart';
 
 class ChartRepo {
   late final CollectionReference<Measure> _chartCollection;
@@ -34,16 +33,19 @@ class ChartRepo {
   }
 
   void addMeasure(Measure measure) async {
-    var ref = FirebaseFirestore.instance
-      .collection("/users/yuY2SQJgcOYgPUKvUdRx/measures/")
-      .doc();
-      ref.set(measure.toJson());
+    print(measure.toJson());
+    // var ref = FirebaseFirestore.instance
+    //   .collection("/users/yuY2SQJgcOYgPUKvUdRx/measures2/")
+    //   .doc();
+    //   ref.set(measure.toJson());
   }
 
   void addLastMeasure(Measure measure) async {
-    var ref = FirebaseFirestore.instance
-      .collection("/users/yuY2SQJgcOYgPUKvUdRx/measures/")
-      .doc(measure.sensorName);
-      ref.set(measure.toJson());
+    print(measure.date.runtimeType);
+    print(measure.toJson());
+    // var ref = FirebaseFirestore.instance
+    //   .collection("/users/yuY2SQJgcOYgPUKvUdRx/lastMeasures2/")
+    //   .doc(measure.sensorName);
+    //   ref.set(measure.toJson());
   }
 }
