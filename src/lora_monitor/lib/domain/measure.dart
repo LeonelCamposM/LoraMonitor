@@ -36,7 +36,10 @@ class Measure {
       json['sensorName'] as String,
       Timestamp.fromDate(DateTime.parse(json['date'])));
 
-  factory Measure.fromJson(Map<dynamic, dynamic> json) => Measure(
+  factory Measure.fromJson(Map<dynamic, dynamic> json) {
+    var utcDate = (json['date'] as Timestamp).toDate().toUtc();
+    var adjustedDate = utcDate.subtract(const Duration(hours: 6));
+    return Measure(
       json['temperature'] as double,
       json['pressure'] as double,
       json['altitude'] as double,
@@ -46,7 +49,9 @@ class Measure {
       json['light'] as double,
       json['soilMoisture'] as double,
       json['sensorName'] as String,
-      json['date'] as Timestamp);
+      Timestamp.fromDate(adjustedDate),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'temperature': temperature,

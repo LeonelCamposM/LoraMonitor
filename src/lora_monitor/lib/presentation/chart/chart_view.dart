@@ -32,6 +32,15 @@ class _ChartViewState extends State<ChartView> {
     ChartRepo repo = ChartRepo();
     List<Measure> measures =
         await repo.getChartData(widget.sensorName, fromDate, toDate);
+    if (oneDay) {
+      List<Measure> todayMeasures = [];
+      for (var measure in measures) {
+        if (isToday(measure.date.toDate())) {
+          todayMeasures.add(measure);
+        }
+      }
+      measures = todayMeasures;
+    }
     setState(() {
       sensorMeasures = measures;
       loading = false;
@@ -71,8 +80,9 @@ class _ChartViewState extends State<ChartView> {
         break;
       case "d":
         oneDay = true;
-        loadData(
-            DateTime.now().subtract(const Duration(days: 1)), DateTime.now());
+        DateTime now = DateTime.now();
+        DateTime startOfDay = DateTime(now.year, now.month, now.day, 0, 0, 0);
+        loadData(startOfDay, DateTime.now());
         break;
 
       default:
@@ -80,6 +90,17 @@ class _ChartViewState extends State<ChartView> {
     setState(() {
       loading = true;
     });
+  }
+
+  bool isToday(DateTime nextReport) {
+    DateTime today = DateTime.now();
+    bool result = false;
+    if (today.month == nextReport.month &&
+        today.day == nextReport.day &&
+        today.year == nextReport.year) {
+      result = true;
+    }
+    return result;
   }
 
   bool sameDay(List<DateTime> fechas) {
@@ -218,7 +239,9 @@ class _ChartViewState extends State<ChartView> {
 
   @override
   void initState() {
-    loadData(DateTime.now().subtract(const Duration(days: 1)), DateTime.now());
+    DateTime now = DateTime.now();
+    DateTime startOfDay = DateTime(now.year, now.month, now.day, 0, 0, 0);
+    loadData(startOfDay, DateTime.now());
     super.initState();
   }
 
