@@ -22,7 +22,7 @@ class DashboardStream extends StatelessWidget {
         }
         return FutureBuilder<QuerySnapshot>(
           future: FirebaseFirestore.instance
-              .collection("users/yuY2SQJgcOYgPUKvUdRx/lastMeasures")
+              .collection("users/yuY2SQJgcOYgPUKvUdRx/lastMeasures2")
               .get(),
           builder: (BuildContext context,
               AsyncSnapshot<QuerySnapshot> lastMeasuressnapshot) {

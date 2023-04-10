@@ -115,71 +115,76 @@ class PercentageWidget extends StatelessWidget {
 
 Widget getVerticalList(
     List<Measure> lastMeasures, List<UserLimit> limits, Function changePage) {
-  return SizedBox(
-    height: SizeConfig.blockSizeVertical * 85,
-    child: ListView(
-        reverse: false,
-        scrollDirection: Axis.vertical,
-        children: List.generate(
-          lastMeasures.length,
-          (index) => Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: SizedBox(
-              height: SizeConfig.blockSizeVertical * 45,
-              width: SizeConfig.blockSizeHorizontal * 100,
-              child: GestureDetector(
-                onTap: () => {
-                  changePage(HomeState.chart, lastMeasures[index].sensorName)
-                },
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      elevation: 10,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+  return lastMeasures.isEmpty
+      ? getBodyText("Todavía no hay mediciones recolectadas", false)
+      : SizedBox(
+          height: SizeConfig.blockSizeVertical * 85,
+          child: ListView(
+              reverse: false,
+              scrollDirection: Axis.vertical,
+              children: List.generate(
+                lastMeasures.length,
+                (index) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: SizedBox(
+                    height: SizeConfig.blockSizeVertical * 45,
+                    width: SizeConfig.blockSizeHorizontal * 100,
+                    child: GestureDetector(
+                      onTap: () => {
+                        changePage(
+                            HomeState.chart, lastMeasures[index].sensorName)
+                      },
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            elevation: 10,
+                            child: Column(
                               children: [
-                                Column(
-                                  children: [
-                                    getBodyText(
-                                        " ${DateFormat('dd MMMM', 'es').format(lastMeasures[index].date.toDate()).replaceAll(" ", " de ")}"
-                                        " ${DateFormat(DateFormat.jm().pattern).format(lastMeasures[index].date.toDate())}",
-                                        false),
-                                    getBodyText(
-                                        "Sensor: ${lastMeasures[index].sensorName}",
-                                        false),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        CircularChartCard(
-                                          sensorMeasure: lastMeasures[index],
-                                          limits: limits,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                Padding(
+                                  padding: const EdgeInsets.all(6.0),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          getBodyText(
+                                              " ${DateFormat('dd MMMM', 'es').format(lastMeasures[index].date.toDate()).replaceAll(" ", " de ")}"
+                                              " ${DateFormat(DateFormat.jm().pattern).format(lastMeasures[index].date.toDate())}",
+                                              false),
+                                          getBodyText(
+                                              "Sensor: ${lastMeasures[index].sensorName}",
+                                              false),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              CircularChartCard(
+                                                sensorMeasure:
+                                                    lastMeasures[index],
+                                                limits: limits,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ),
-        )),
-  );
+              )),
+        );
 }
 
 Icon getTitleIcon(String title) {
