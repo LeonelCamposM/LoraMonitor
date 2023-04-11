@@ -154,55 +154,58 @@ Widget getVerticalList(
                 lastMeasures.length,
                 (index) => Padding(
                   padding: const EdgeInsets.only(bottom: 10),
-                  child: SizedBox(
-                    height: SizeConfig.blockSizeVertical * 45,
-                    width: SizeConfig.blockSizeHorizontal * 100,
-                    child: GestureDetector(
-                      onTap: () => {
-                        changePage(
-                            HomeState.chart, lastMeasures[index].sensorName)
-                      },
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            elevation: 10,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(6.0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Column(
-                                        children: [
-                                          getBodyText(
-                                              " ${lastMeasures[index].date.toDate()}",
-                                              false),
-                                          getBodyText(
-                                              "Sensor: ${lastMeasures[index].sensorName}",
-                                              false),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              CircularChartCard(
-                                                sensorMeasure:
-                                                    lastMeasures[index],
-                                                limits: limits,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                  child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: SizedBox(
+                      //height: SizeConfig.blockSizeVertical * 45,
+                      width: SizeConfig.blockSizeHorizontal * 100,
+                      child: GestureDetector(
+                        onTap: () => {
+                          changePage(
+                              HomeState.chart, lastMeasures[index].sensorName)
+                        },
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              elevation: 10,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(6.0),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            getBodyText(
+                                                " ${lastMeasures[index].date.toDate()}",
+                                                false),
+                                            getBodyText(
+                                                "Sensor: ${lastMeasures[index].sensorName}",
+                                                false),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                CircularChartCard(
+                                                  sensorMeasure:
+                                                      lastMeasures[index],
+                                                  limits: limits,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -285,7 +288,7 @@ Widget getVerticalIcon(Measure lastMeasure, Map<String, UserLimit> limitsMap) {
   }
   mapKeys.sort(((a, b) => translateTitle(a).compareTo(translateTitle(b))));
   return SizedBox(
-    height: SizeConfig.blockSizeVertical * 33,
+    height: SizeConfig.blockSizeVertical * (10 * (mapKeys.length / 2).ceil()),
     width: SizeConfig.blockSizeHorizontal * 79,
     child: ListView(
         physics: const NeverScrollableScrollPhysics(),
