@@ -229,9 +229,19 @@ Widget getVerticalList(
                                             getBodyText(
                                                 "Sensor: ${lastMeasures[index].sensorName}",
                                                 true),
-                                            getBodyText(
-                                                "${lastMeasures[index].date.toDate().day} de ${obtenerNombreMes(lastMeasures[index].date.toDate().month)}",
-                                                false),
+                                            lastMeasures[index]
+                                                        .date
+                                                        .toDate()
+                                                        .hour >
+                                                    12
+                                                ? getBodyText(
+                                                    "${lastMeasures[index].date.toDate().day} de ${obtenerNombreMes(lastMeasures[index].date.toDate().month)}  "
+                                                    "${lastMeasures[index].date.toDate().hour - 12}: ${lastMeasures[index].date.toDate().minute} p.m",
+                                                    false)
+                                                : getBodyText(
+                                                    "${lastMeasures[index].date.toDate().day} de ${obtenerNombreMes(lastMeasures[index].date.toDate().month)}  "
+                                                    "${lastMeasures[index].date.toDate().hour}: ${lastMeasures[index].date.toDate().minute} a.m",
+                                                    false),
                                             Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
