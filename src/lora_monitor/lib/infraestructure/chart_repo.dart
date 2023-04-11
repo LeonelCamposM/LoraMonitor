@@ -33,7 +33,6 @@ class ChartRepo {
   }
 
   void addMeasure(Measure measure) async {
-    print(measure.toJson());
     var ref = FirebaseFirestore.instance
         .collection("/users/yuY2SQJgcOYgPUKvUdRx/measures/")
         .doc();

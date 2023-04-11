@@ -58,13 +58,9 @@ class _ConnectedDashboardState extends State<ConnectedDashboard> {
       final response = await http.get(
         Uri.parse('http://192.168.1.22:80/deleteAllData'),
       );
-      if (response.statusCode == 200) {
-        print("data deleted");
-      }
-    } catch (e) {
-      print("catch");
-      print(e);
-    }
+      if (response.statusCode == 200) {}
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   void uploadNewMeasures(context) async {
