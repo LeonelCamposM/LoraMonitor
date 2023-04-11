@@ -41,6 +41,7 @@ class _ChartViewState extends State<ChartView> {
       }
       measures = todayMeasures;
     }
+
     setState(() {
       sensorMeasures = measures;
       loading = false;

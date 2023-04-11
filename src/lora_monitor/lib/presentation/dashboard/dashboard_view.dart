@@ -236,11 +236,11 @@ Widget getVerticalList(
                                                     12
                                                 ? getBodyText(
                                                     "${lastMeasures[index].date.toDate().day} de ${obtenerNombreMes(lastMeasures[index].date.toDate().month)}  "
-                                                    "${lastMeasures[index].date.toDate().hour - 12}: ${lastMeasures[index].date.toDate().minute} p.m",
+                                                    "${lastMeasures[index].date.toDate().hour - 12}:${lastMeasures[index].date.toDate().minute} p.m",
                                                     false)
                                                 : getBodyText(
                                                     "${lastMeasures[index].date.toDate().day} de ${obtenerNombreMes(lastMeasures[index].date.toDate().month)}  "
-                                                    "${lastMeasures[index].date.toDate().hour}: ${lastMeasures[index].date.toDate().minute} a.m",
+                                                    "${lastMeasures[index].date.toDate().hour}:${lastMeasures[index].date.toDate().minute} a.m",
                                                     false),
                                             Column(
                                               crossAxisAlignment:
