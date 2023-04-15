@@ -2,7 +2,7 @@
 #include <ArduinoJson.h>
 
 #define DEBUG
-// #define SENSOR_NODE
+//#define SENSOR_NODE
 #define uS_TO_S_FACTOR 1000000
 #define TIME_TO_SLEEP 2000
 
@@ -25,26 +25,33 @@ void setup() {
 #endif
 
 #ifdef SENSOR_NODE
-  esp_sleep_enable_timer_wakeup(3600000000);
-  if (startLora()) {
-    StaticJsonDocument<200> message;
-    message["temperature"] = -1.01;
-    message["pressure"] = -1.01;
-    message["altitude"] = -1.01;
-    message["battery"] = -1.01;
-    message["humidity"] = -1.01;
-    message["date"] = "today";
-    message["light"] = -1.01;
-    message["rain"] = -1.01;
-    message["soilMoisture"] = getMoisturePercentage();
-    message["sensorName"] = sensorName;
-    String jsonString;
-    serializeJson(message, jsonString);
-    sendAckLora(String(jsonString));
-    Serial.println("send " + jsonString);
-    sleepLora();
-  }
-  goToSleep();
+    esp_sleep_enable_timer_wakeup(3600000000);
+    if (startLora()) {
+      StaticJsonDocument<200> message;
+      if (startBMP()) {
+        message["temperature"] = getBMPTemperature();
+        message["pressure"] = getBMPPressure();
+        message["altitude"] = getBMPAltitude();
+        message["humidity"] = getBMPHumidity();
+      } else {
+        message["temperature"] = -1.01;
+        message["pressure"] = -1.01;
+        message["altitude"] = -1.01;
+        message["humidity"] = -1.01;
+      }
+      message["battery"] = -1.01;
+      message["date"] = "today";
+      message["light"] = -1.01;
+      message["rain"] = -1.01;
+      message["soilMoisture"] = getMoisturePercentage();
+      message["sensorName"] = "sensorOne";
+      String jsonString;
+      serializeJson(message, jsonString);
+      sendAckLora(String(jsonString));
+      Serial.println("send " + jsonString);
+      sleepLora();
+    }
+    goToSleep();
 #else
   start_lora = startLora();
   setupRTC();
