@@ -1,5 +1,5 @@
-const char* ssid = "PLANTMONITOR";
-const char* password = "12345leo";
+const char* ssid = "LORAMONITOR";
+const char* password = "12345lora";
 IPAddress local_IP(192,168,1,22);
 IPAddress gateway(192,168,1,5);
 IPAddress subnet(255,255,255,0);

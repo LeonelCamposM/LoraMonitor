@@ -51,6 +51,38 @@ bool validatePacket(String packet) {
   String sensorName = doc["sensorName"];
   measurePath = sensorName;
 
+  // Validate the values
+  if (!doc["temperature"].is<float>() || doc["temperature"].isNull()) {
+    return false;
+  }
+  if (!doc["pressure"].is<float>() || doc["pressure"].isNull()) {
+    return false;
+  }
+  if (!doc["altitude"].is<float>() || doc["altitude"].isNull()) {
+    return false;
+  }
+  if (!doc["humidity"].is<float>() || doc["humidity"].isNull()) {
+    return false;
+  }
+  if (!doc["battery"].is<float>() || doc["battery"].isNull()) {
+    return false;
+  }
+  if (!doc["date"].is<String>() || doc["date"].isNull()) {
+    return false;
+  }
+  if (!doc["light"].is<float>() || doc["light"].isNull()) {
+    return false;
+  }
+  if (!doc["rain"].is<float>() || doc["rain"].isNull()) {
+    return false;
+  }
+  if (!doc["soilMoisture"].is<float>() || doc["soilMoisture"].isNull()) {
+    return false;
+  }
+  if (!doc["sensorName"].is<String>() || doc["sensorName"].isNull()) {
+    return false;
+  }
+
   return true;
 }
 
