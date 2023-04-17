@@ -19,15 +19,9 @@ void setupRTC() {
 #endif
     // This line sets the RTC with an explicit date & time, for example to set
     // January 21, 2014 at 3am you would call:
-    rtc.adjust(DateTime(2023, 3, 25, 2, 8, 0));
-    //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    rtc.adjust(DateTime(2023, 3, 25, 3, 8, 0));
   }
   rtc.start();
-  float drift = 43;
-  float period_sec = (7 * 86400);
-  float deviation_ppm = (drift / period_sec * 1000000);
-  float drift_unit = 4.34;
-  int offset = round(deviation_ppm / drift_unit);
 }
 
 String getTime() {

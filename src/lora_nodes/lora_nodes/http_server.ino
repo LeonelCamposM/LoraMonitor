@@ -14,8 +14,8 @@ AsyncWebServer server(80);
 void startHttpServer() {
 
   server.on("/deleteAllData", HTTP_GET, [](AsyncWebServerRequest* request) {
-    bool response = remove_file("/" + sensorNames[0]) || remove_file("/" +sensorNames[1]) || remove_file("/" +sensorNames[2]) 
-                    || remove_file("/" +sensorNames[3]) || remove_file("/" +sensorNames[4]);
+    bool response = remove_file("/" + sensorNames[0]) || remove_file("/" + sensorNames[1]) || remove_file("/" + sensorNames[2])
+                    || remove_file("/" + sensorNames[3]) || remove_file("/" + sensorNames[4]);
     if (response) {
       request->send(200, "text/plain", "ok");
 #ifdef DEBUG
@@ -31,19 +31,19 @@ void startHttpServer() {
 
   server.on("/getAllData", HTTP_GET, [](AsyncWebServerRequest* request) {
     String response = "";
-    String data =  getAllData( "/" + sensorNames[0]);
+    String data = getAllData("/" + sensorNames[0]);
     response = data == "" ? "" : data + "/\n";
-    data =  getAllData("/" + sensorNames[1]);
+    data = getAllData("/" + sensorNames[1]);
     response += data == "" ? "" : data + "/\n";
-    data =  getAllData("/" + sensorNames[2]);
+    data = getAllData("/" + sensorNames[2]);
     response += data == "" ? "" : data + "/\n";
-    data =  getAllData("/" + sensorNames[3]);
+    data = getAllData("/" + sensorNames[3]);
     response += data == "" ? "" : data + "/\n";
-    data =  getAllData("/" + sensorNames[4]);
+    data = getAllData("/" + sensorNames[4]);
     response += data == "" ? "" : data + "/\n";
-    if(response == ""){
+    if (response == "") {
       request->send(404, "text/plain", "error");
-    } else{
+    } else {
       request->send(200, "text/plain", response);
     }
 #ifdef DEBUG

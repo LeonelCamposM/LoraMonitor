@@ -33,7 +33,7 @@ float getBMPTemperature() {
 }
 
 float getBMPPressure() {
-  return bme.readPressure();
+  return bme.readPressure() / 100.0F;
 }
 
 float getBMPHumidity() {
