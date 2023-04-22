@@ -5,12 +5,12 @@
 #include <Adafruit_SSD1306.h>
 
 #define DEBUG
-// #define SENSOR_NODE
+#define SENSOR_NODE
 #define uS_TO_S_FACTOR 1000000
 #define TIME_TO_SLEEP 2000
 
 bool start_lora = false;
-String sensorName = "sensorTwo";
+String sensorName = "sensorThree";
 
 #define SCREEN_WIDTH 128  // OLED display width, in pixels
 #define SCREEN_HEIGHT 64  // OLED display height, in pixels
@@ -59,9 +59,15 @@ void setup() {
       message["altitude"] = -1.01;
       message["humidity"] = -1.01;
     }
+
+    if (startTSL()) {
+      message["light"] = getLuminosity();
+    } else {
+      message["light"] = -1.01;
+    }
+
     message["battery"] = -1.01;
     message["date"] = "today";
-    message["light"] = -1.01;
     message["rain"] = -1.01;
     message["soilMoisture"] = getMoisturePercentage();
     message["sensorName"] = sensorName;
