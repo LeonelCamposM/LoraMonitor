@@ -59,12 +59,13 @@ double getMoisturePercentage() {
   return percentageHumidity;
 }
 
-const int raindropsPin = 2;
+const int raindropsPin = 4;
 int maxRaindrops = 4095;  // dry
 int minRaindrops = 1263;  // wet
 
 int getRaindropPercentage() {
   int sensorValue = analogRead(raindropsPin);
+  Serial.println(sensorValue);
   int percentageRaindrops = map(sensorValue, minRaindrops, maxRaindrops, 100, 0);
   if (percentageRaindrops < 0 || sensorValue == 0) {
     percentageRaindrops = 0;

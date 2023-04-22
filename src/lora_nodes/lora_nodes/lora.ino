@@ -107,6 +107,7 @@ void handleRequest(int packetSize, String date) {
 
 String receiveLora() {
   while (true) {
+ 
     packet = "";
     int packetSize = LoRa.parsePacket();
     if (packetSize) {
@@ -170,3 +171,5 @@ void sendAckLora(String message) {
 void sleepLora() {
   LoRa.sleep();
 }
+
+

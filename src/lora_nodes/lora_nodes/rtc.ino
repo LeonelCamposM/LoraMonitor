@@ -19,7 +19,7 @@ void setupRTC() {
 #endif
     // This line sets the RTC with an explicit date & time, for example to set
     // January 21, 2014 at 3am you would call:
-    rtc.adjust(DateTime(2023, 3, 25, 3, 8, 0));
+    rtc.adjust(DateTime(2023, 4, 19, 15, 7, 0));
   }
   rtc.start();
 }
@@ -33,6 +33,7 @@ String getTime() {
   Serial.print(now.month(), DEC);
   Serial.print('/');
   Serial.print(now.day(), DEC);
+  Serial.print("HOUR");
   Serial.print(now.hour(), DEC);
   Serial.print(':');
   Serial.print(now.minute(), DEC);
@@ -41,7 +42,7 @@ String getTime() {
   Serial.println();
   Serial.println();
 #endif
-  char buffer[20];
+  char buffer[40];
   sprintf(buffer, "%04d-%02d-%02d %02d:%02d:%02d", now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
   result = String(buffer);
   return result;
