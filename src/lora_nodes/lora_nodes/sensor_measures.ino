@@ -1,8 +1,11 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_BME280.h>
+#include <Adafruit_Sensor.h>
+#include "Adafruit_TSL2591.h"
 
 Adafruit_BME280 bme;
+Adafruit_TSL2591 tsl = Adafruit_TSL2591(2591);
 
 bool startBMP() {
   bool success = true;
@@ -22,6 +25,22 @@ bool startBMP() {
   }
 
   return success;
+}
+
+bool startTSL() {
+  bool success = true;
+  if (!tsl.begin()) {
+    success = false;
+  }
+  return success;
+}
+
+float getLuminosity() {
+  uint32_t lum = tsl.getFullLuminosity();
+  uint16_t ir, full;
+  ir = lum >> 16;
+  full = lum & 0xFFFF;
+  return tsl.calculateLux(full, ir);
 }
 
 float getBMPAltitude() {
