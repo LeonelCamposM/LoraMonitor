@@ -60,12 +60,12 @@ float getBMPHumidity() {
 }
 
 const int moisturePin = 36;
-int maxMoisture = 2670;  // dry
-int minMoisture = 1050;  // wet
+int maxMoisture = 2733;  // dry
+int minMoisture = 1091;  // wet
 
 double getMoisturePercentage() {
   double sensorValue = analogRead(moisturePin);
-#ifdef DEBUG
+#ifdef DEBUG 
   Serial.println(sensorValue);
 #endif
   double percentageHumidity = map(sensorValue, minMoisture, maxMoisture, 100, 0);

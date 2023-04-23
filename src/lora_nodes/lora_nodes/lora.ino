@@ -96,7 +96,7 @@ void handleRequest(int packetSize, String date) {
   if (validPacket) {
     Serial.println(measurePath);
     saveData("/" + measurePath, packet, date);
-    sendLora("ACK");
+    sendLora("ACK"+measurePath);
 #ifdef DEBUG
     Serial.println("Recieved " + messageSize + " bytes");
     Serial.println(packet);
@@ -139,7 +139,7 @@ void sendAckLora(String message) {
         while (LoRa.available()) {
           response += (char)LoRa.read();
         }
-        if (response == "ACK") {
+        if (response == "ACK"+sensorName) {
 #ifdef DEBUG
           Serial.println("Message received correctly");
 #endif

@@ -10,7 +10,7 @@
 #define TIME_TO_SLEEP 2000
 
 bool start_lora = false;
-String sensorName = "sensorThree";
+String sensorName = "sensorTwo";
 
 #define SCREEN_WIDTH 128  // OLED display width, in pixels
 #define SCREEN_HEIGHT 64  // OLED display height, in pixels
