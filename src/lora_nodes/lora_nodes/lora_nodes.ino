@@ -18,16 +18,19 @@ String sensorName = "sensorTwo";
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET -1  // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+unsigned long apModeStartTime = 0;
 
 void welcomeMessage() {
   display.clearDisplay();
-  display.setCursor(0, 0);
-  display.setTextSize(2);
+  display.setTextSize(3);
   display.setTextColor(WHITE);
-  display.println("apMode");
+  int16_t x1, y1;
+  uint16_t w, h;
+  display.getTextBounds("listo", 0, 0, &x1, &y1, &w, &h);
+  display.setCursor((SCREEN_WIDTH - w) / 2, (SCREEN_HEIGHT - h) / 2);
+  display.println("Listo");
   display.display();
 }
-
 
 void goToSleep() {
   esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
@@ -76,10 +79,8 @@ void setup() {
   start_lora = startLora();
   setupRTC();
   Serial.println(getTime());
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {  // Address 0x3C for 128x64
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     Serial.println(F("SSD1306 allocation failed"));
-    for (;;)
-      ;  // Don't proceed, loop forever
   } else {
     display.ssd1306_command(SSD1306_DISPLAYON);
   }
@@ -87,6 +88,7 @@ void setup() {
   if (toggleMode()) {
     welcomeMessage();
     Serial.println("apMode");
+    apModeStartTime = millis();  // record the start time of AP mode
     setupAPMode();
   } else {
     display.ssd1306_command(SSD1306_DISPLAYOFF);
@@ -96,6 +98,11 @@ void setup() {
 }
 
 void loop() {
+  if (apModeStartTime > 0 && millis() - apModeStartTime >= 300000) {
+    // 5 minutes have passed since AP mode was activated
+    ESP.restart();  // restart the ESP
+  }
+
   if (start_lora) {
     receiveLora();
   }

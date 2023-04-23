@@ -106,15 +106,11 @@ void handleRequest(int packetSize, String date) {
 }
 
 String receiveLora() {
-  while (true) {
- 
-    packet = "";
-    int packetSize = LoRa.parsePacket();
-    if (packetSize) {
-      String date = getTime();
-      handleRequest(packetSize, date);
-      break;
-    }
+  packet = "";
+  int packetSize = LoRa.parsePacket();
+  if (packetSize) {
+    String date = getTime();
+    handleRequest(packetSize, date);
   }
   return packet;
 }
@@ -171,5 +167,3 @@ void sendAckLora(String message) {
 void sleepLora() {
   LoRa.sleep();
 }
-
-
