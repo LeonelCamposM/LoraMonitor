@@ -5,7 +5,7 @@
 #include <Adafruit_SSD1306.h>
 
 #define DEBUG
-#define SENSOR_NODE
+// #define SENSOR_NODE
 #define uS_TO_S_FACTOR 1000000
 #define TIME_TO_SLEEP 2000
 
@@ -22,13 +22,14 @@ unsigned long apModeStartTime = 0;
 
 void welcomeMessage() {
   display.clearDisplay();
-  display.setTextSize(3);
+  display.setTextSize(1);
   display.setTextColor(WHITE);
   int16_t x1, y1;
   uint16_t w, h;
-  display.getTextBounds("listo", 0, 0, &x1, &y1, &w, &h);
+  display.getTextBounds(getTime(), 0, 0, &x1, &y1, &w, &h);
   display.setCursor((SCREEN_WIDTH - w) / 2, (SCREEN_HEIGHT - h) / 2);
-  display.println("Listo");
+  display.println(getTime());
+  display.println(analogRead(36));
   display.display();
 }
 
@@ -46,7 +47,6 @@ void setup() {
   while (!Serial)
     ;
 #endif
-
 #ifdef SENSOR_NODE
   esp_sleep_enable_timer_wakeup(3600000000);
   if (startLora()) {
@@ -71,8 +71,8 @@ void setup() {
 
     message["battery"] = -1.01;
     message["date"] = "today";
-    message["rain"] = -1.01;
-    message["soilMoisture"] = getMoisturePercentage();
+    message["rain"] = analogRead(36);
+    message["soilMoisture"] = analogRead(4);
     message["sensorName"] = sensorName;
     String jsonString;
     serializeJson(message, jsonString);
@@ -92,6 +92,7 @@ void setup() {
   }
   display.clearDisplay();
   if (toggleMode()) {
+    Serial.println(analogRead(36));
     welcomeMessage();
     Serial.println("apMode");
     apModeStartTime = millis();  // record the start time of AP mode
