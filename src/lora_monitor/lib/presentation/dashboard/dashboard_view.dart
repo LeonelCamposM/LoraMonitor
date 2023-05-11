@@ -56,10 +56,12 @@ class DashboardIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final isWithinLimits = limit.max > measure && limit.min < measure;
     final barColor = isWithinLimits ? goodColor : badColor;
+    final sign = getUnitMeasure(title);
     return PercentageWidget(
       percentaje: measure,
       title: title,
       barColor: barColor,
+      measureSign: sign,
     );
   }
 }
@@ -69,13 +71,15 @@ class PercentageWidget extends StatelessWidget {
   double percentaje;
   String text = "";
   String title = "";
+  String measureSign = "";
   Color barColor;
 
   PercentageWidget(
       {super.key,
       required this.percentaje,
       required this.title,
-      required this.barColor}) {
+      required this.barColor,
+      required this.measureSign}) {
     text = percentaje.toInt().toString();
   }
 
@@ -102,7 +106,13 @@ class PercentageWidget extends StatelessWidget {
             children: [
               getBodyText(title, false),
               Row(
-                children: [getBodyText("${percentaje.ceil()} %", false)],
+                children: [
+                  title == "Lluvia"
+                      ? percentaje >= 80
+                          ? getBodyText("Sí", false)
+                          : getBodyText("No", false)
+                      : getBodyText("${percentaje.ceil()} $measureSign", false)
+                ],
               ),
             ],
           ),
@@ -298,6 +308,35 @@ Icon getTitleIcon(String title) {
     default:
   }
   return icon;
+}
+
+String getUnitMeasure(String measure) {
+  String unitMeasure;
+
+  switch (measure) {
+    case "Humedad":
+      unitMeasure = "%";
+      break;
+    case "Luz":
+      unitMeasure = "lux";
+      break;
+    case "Presión":
+      unitMeasure = "hPa";
+      break;
+    case "H. Suelo":
+      unitMeasure = "%";
+      break;
+    case "Altitud":
+      unitMeasure = "m";
+      break;
+    case "Temperatura":
+      unitMeasure = "ºC";
+      break;
+    default:
+      unitMeasure = "Unidad de medida desconocida";
+  }
+
+  return unitMeasure;
 }
 
 String translateTitle(String title) {
