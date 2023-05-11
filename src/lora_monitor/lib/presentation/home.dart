@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lora_monitor/infraestructure/dashboard/dashboard_stream.dart';
 import 'package:lora_monitor/infraestructure/settings/user_limits_stream.dart';
 import 'package:lora_monitor/presentation/ap_sensor/ap_sensor_repo.dart';
-import 'package:lora_monitor/presentation/ap_sensor/connected_dashboard.dart';
-import 'package:lora_monitor/presentation/ap_sensor/disconnected_dashboard.dart';
 import 'package:lora_monitor/presentation/chart/chart_view.dart';
 import 'package:lora_monitor/presentation/chart/connection_stream.dart';
 import 'package:lora_monitor/presentation/core/text.dart';
@@ -81,7 +79,6 @@ class MyHomePageState extends State<MyHomePage> {
             break;
           case HomeState.chart:
             changeTitle("Gráficos de mediciones");
-            print(widget.sensorName);
             currentPage = ConnectionStream(
                 url: 'http://www.google.com',
                 connected: ChartView(sensorName: widget.sensorName),

@@ -2,8 +2,6 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
-import 'package:lora_monitor/presentation/ap_sensor/connected_dashboard.dart';
-import 'package:lora_monitor/presentation/ap_sensor/disconnected_dashboard.dart';
 import 'package:lora_monitor/presentation/core/size_config.dart';
 
 // ignore: must_be_immutable
