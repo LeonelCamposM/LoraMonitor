@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:lora_monitor/infraestructure/dashboard/dashboard_stream.dart';
 import 'package:lora_monitor/infraestructure/settings/user_limits_stream.dart';
 import 'package:lora_monitor/presentation/ap_sensor/ap_sensor_repo.dart';
+import 'package:lora_monitor/presentation/ap_sensor/connected_dashboard.dart';
+import 'package:lora_monitor/presentation/ap_sensor/disconnected_dashboard.dart';
 import 'package:lora_monitor/presentation/chart/chart_view.dart';
+import 'package:lora_monitor/presentation/chart/connection_stream.dart';
+import 'package:lora_monitor/presentation/core/text.dart';
 import 'core/size_config.dart';
 
 enum NavigationState {
@@ -77,7 +81,11 @@ class MyHomePageState extends State<MyHomePage> {
             break;
           case HomeState.chart:
             changeTitle("Gráficos de mediciones");
-            currentPage = ChartView(sensorName: widget.sensorName);
+            print(widget.sensorName);
+            currentPage = ConnectionStream(
+                url: 'http://www.google.com',
+                connected: ChartView(sensorName: widget.sensorName),
+                disconnected: getTitleText("Conectese a internet", false));
             break;
         }
         break;
@@ -87,7 +95,6 @@ class MyHomePageState extends State<MyHomePage> {
         break;
       case NavigationState.measures:
         changeTitle("Recolección de datos");
-        //currentPage = const Text("home");
         currentPage = const APSensorRepo();
         break;
     }
@@ -119,6 +126,7 @@ class MyHomePageState extends State<MyHomePage> {
         onTap: (pagina) {
           setState(() {
             navState = NavigationState.values[pagina];
+            homeState = HomeState.dashboard;
           });
         },
       ),
