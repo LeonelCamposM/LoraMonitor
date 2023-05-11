@@ -333,7 +333,7 @@ String getUnitMeasure(String measure) {
       unitMeasure = "ºC";
       break;
     default:
-      unitMeasure = "Unidad de medida desconocida";
+      unitMeasure = "";
   }
 
   return unitMeasure;
