@@ -22,6 +22,7 @@ class _ChartViewState extends State<ChartView> {
   List<ChartData> chartData = [];
   List<String> options = [];
   String currentMeasure = "";
+  String currenUnitMeasure = "";
   bool oneDay = true;
   bool oneWeek = false;
   bool oneMonth = false;
@@ -220,8 +221,37 @@ class _ChartViewState extends State<ChartView> {
       default:
     }
     setState(() {
+      currenUnitMeasure = getUnitMeasure(selectedMeasure);
       currentMeasure = selectedMeasure;
     });
+  }
+
+  String getUnitMeasure(String measure) {
+    String unitMeasure;
+
+    switch (measure) {
+      case "Humedad":
+        unitMeasure = "%";
+        break;
+      case "Luz":
+        unitMeasure = "lux";
+        break;
+      case "Presión":
+        unitMeasure = "hPa";
+        break;
+      case "H. Suelo":
+        unitMeasure = "%";
+        break;
+      case "Altitud":
+        unitMeasure = "m";
+        break;
+      case "Temperatura":
+        unitMeasure = "ºC";
+        break;
+      default:
+        unitMeasure = "";
+    }
+    return unitMeasure;
   }
 
   @override
@@ -272,7 +302,7 @@ class _ChartViewState extends State<ChartView> {
                               rangePadding: ChartRangePadding.additional,
                               dateFormat: DateFormat.jm()),
                           primaryYAxis: NumericAxis(
-                              labelFormat: '{value}%',
+                              labelFormat: '{value}$currenUnitMeasure',
                               borderColor: Colors.blue),
                           series: <ChartSeries<ChartData, DateTime>>[
                             LineSeries<ChartData, DateTime>(
@@ -292,7 +322,7 @@ class _ChartViewState extends State<ChartView> {
                                   rangePadding: ChartRangePadding.additional,
                                   dateFormat: DateFormat('dd MMMM', 'es')),
                               primaryYAxis: NumericAxis(
-                                  labelFormat: '{value}%',
+                                  labelFormat: '{value}$currenUnitMeasure',
                                   borderColor: Colors.blue),
                               series: <ChartSeries<ChartData, DateTime>>[
                                 LineSeries<ChartData, DateTime>(
@@ -312,7 +342,7 @@ class _ChartViewState extends State<ChartView> {
                                   rangePadding: ChartRangePadding.additional,
                                   dateFormat: DateFormat('dd/MM/yyyy')),
                               primaryYAxis: NumericAxis(
-                                  labelFormat: '{value}%',
+                                  labelFormat: '{value}$currenUnitMeasure',
                                   borderColor: Colors.blue),
                               series: <ChartSeries<ChartData, DateTime>>[
                                 LineSeries<ChartData, DateTime>(
