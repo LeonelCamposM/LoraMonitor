@@ -59,9 +59,9 @@ float getBMPHumidity() {
   return bme.readHumidity();
 }
 
-const int moisturePin = 36;
-int maxMoisture = 2733;  // dry
-int minMoisture = 1091;  // wet
+const int moisturePin = 4;
+int maxMoisture = 4095;  // dry
+int minMoisture = 0;  // wet
 
 double getMoisturePercentage() {
   double sensorValue = analogRead(moisturePin);
@@ -78,7 +78,7 @@ double getMoisturePercentage() {
   return percentageHumidity;
 }
 
-const int raindropsPin = 4;
+const int raindropsPin = 36;
 int maxRaindrops = 4095;  // dry
 int minRaindrops = 1263;  // wet
 

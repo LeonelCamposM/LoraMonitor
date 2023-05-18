@@ -5,12 +5,13 @@
 #include <Adafruit_SSD1306.h>
 
 #define DEBUG
-// #define SENSOR_NODE
+#define SENSOR_NODE
 #define uS_TO_S_FACTOR 1000000
 #define TIME_TO_SLEEP 2000
 
 bool start_lora = false;
-String sensorName = "sensorTwo";
+String sensorName = "sensorFour";
+bool done = false;
 
 #define SCREEN_WIDTH 128  // OLED display width, in pixels
 #define SCREEN_HEIGHT 64  // OLED display height, in pixels
@@ -48,6 +49,7 @@ void setup() {
     ;
 #endif
 #ifdef SENSOR_NODE
+  Serial.println(analogRead(4));
   esp_sleep_enable_timer_wakeup(3600000000);
   if (startLora()) {
     StaticJsonDocument<200> message;
@@ -71,7 +73,7 @@ void setup() {
 
     message["battery"] = -1.01;
     message["date"] = "today";
-    message["rain"] = analogRead(36);
+    message["rain"] =  getRaindropPercentage();
     message["soilMoisture"] = analogRead(4);
     message["sensorName"] = sensorName;
     String jsonString;
@@ -91,24 +93,27 @@ void setup() {
     display.ssd1306_command(SSD1306_DISPLAYON);
   }
   display.clearDisplay();
-  if (toggleMode()) {
-    Serial.println(analogRead(36));
-    welcomeMessage();
-    Serial.println("apMode");
-    apModeStartTime = millis();  // record the start time of AP mode
-    setupAPMode();
-  } else {
-    display.ssd1306_command(SSD1306_DISPLAYOFF);
-    Serial.println("loraMode");
-  }
+  Serial.println(analogRead(36));
+  welcomeMessage();
+  Serial.println("apMode");
+  apModeStartTime = millis();  // record the start time of AP mode
+  setupAPMode();
 #endif
 }
 
 void loop() {
-  if (apModeStartTime > 0 && millis() - apModeStartTime >= 300000) {
-    // 5 minutes have passed since AP mode was activated
-    ESP.restart();  // restart the ESP
+
+  if (!done) {
+    if (apModeStartTime > 0 && millis() - apModeStartTime >= 300000) {
+      // 5 minutes have passed since AP mode was activated
+      display.ssd1306_command(SSD1306_DISPLAYOFF);
+      Serial.println("loraMode");
+      stopAccesPoint();
+      done = true;
+    }
   }
+
+
 
   if (start_lora) {
     receiveLora();
