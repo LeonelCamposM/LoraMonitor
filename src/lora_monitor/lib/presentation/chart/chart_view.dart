@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:lora_monitor/domain/measure.dart';
 import 'package:lora_monitor/presentation/chart/dropdown.dart';
 import 'package:lora_monitor/presentation/core/loading.dart';
+import 'package:lora_monitor/presentation/core/text.dart';
 import 'package:lora_monitor/presentation/dashboard/dashboard_view.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../infraestructure/chart_repo.dart';
@@ -226,34 +227,6 @@ class _ChartViewState extends State<ChartView> {
     });
   }
 
-  String getUnitMeasure(String measure) {
-    String unitMeasure;
-
-    switch (measure) {
-      case "Humedad":
-        unitMeasure = "%";
-        break;
-      case "Luz":
-        unitMeasure = "lux";
-        break;
-      case "Presión":
-        unitMeasure = "hPa";
-        break;
-      case "H. Suelo":
-        unitMeasure = "%";
-        break;
-      case "Altitud":
-        unitMeasure = "m";
-        break;
-      case "Temperatura":
-        unitMeasure = "ºC";
-        break;
-      default:
-        unitMeasure = "";
-    }
-    return unitMeasure;
-  }
-
   @override
   void setState(VoidCallback fn) {
     if (mounted) {
@@ -284,11 +257,17 @@ class _ChartViewState extends State<ChartView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Center(
-                  child: DropdownCustomButton(
-                      options: options,
-                      onChanged: onMeasureSelected,
-                      selectedValue: currentMeasure)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  getBodyText(getSensorName(widget.sensorName), false),
+                  Center(
+                      child: DropdownCustomButton(
+                          options: options,
+                          onChanged: onMeasureSelected,
+                          selectedValue: currentMeasure)),
+                ],
+              ),
               SizedBox(
                   width: SizeConfig.blockSizeHorizontal * 90,
                   height: SizeConfig.blockSizeVertical * 50,
