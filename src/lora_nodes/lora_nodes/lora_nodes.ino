@@ -5,7 +5,7 @@
 #include <Adafruit_SSD1306.h>
 
 #define DEBUG
-#define SENSOR_NODE
+// #define SENSOR_NODE
 #define uS_TO_S_FACTOR 1000000
 #define TIME_TO_SLEEP 2000
 
@@ -104,7 +104,7 @@ void setup() {
 void loop() {
 
   if (!done) {
-    if (apModeStartTime > 0 && millis() - apModeStartTime >= 300000) {
+    if (apModeStartTime > 0 && millis() - apModeStartTime >= 210000) {
       // 5 minutes have passed since AP mode was activated
       display.ssd1306_command(SSD1306_DISPLAYOFF);
       Serial.println("loraMode");
