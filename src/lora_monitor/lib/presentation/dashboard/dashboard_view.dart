@@ -122,49 +122,49 @@ class PercentageWidget extends StatelessWidget {
   }
 }
 
-String obtenerNombreMes(int numeroMes) {
-  String nombreMes;
-  switch (numeroMes) {
+String getMonthName(int month) {
+  String monthName;
+  switch (month) {
     case 1:
-      nombreMes = 'enero';
+      monthName = 'enero';
       break;
     case 2:
-      nombreMes = 'febrero';
+      monthName = 'febrero';
       break;
     case 3:
-      nombreMes = 'marzo';
+      monthName = 'marzo';
       break;
     case 4:
-      nombreMes = 'abril';
+      monthName = 'abril';
       break;
     case 5:
-      nombreMes = 'mayo';
+      monthName = 'mayo';
       break;
     case 6:
-      nombreMes = 'junio';
+      monthName = 'junio';
       break;
     case 7:
-      nombreMes = 'julio';
+      monthName = 'julio';
       break;
     case 8:
-      nombreMes = 'agosto';
+      monthName = 'agosto';
       break;
     case 9:
-      nombreMes = 'septiembre';
+      monthName = 'septiembre';
       break;
     case 10:
-      nombreMes = 'octubre';
+      monthName = 'octubre';
       break;
     case 11:
-      nombreMes = 'noviembre';
+      monthName = 'noviembre';
       break;
     case 12:
-      nombreMes = 'diciembre';
+      monthName = 'diciembre';
       break;
     default:
       throw Exception('Número de mes inválido');
   }
-  return nombreMes;
+  return monthName;
 }
 
 Widget getVerticalList(
@@ -237,7 +237,7 @@ Widget getVerticalList(
                                         Column(
                                           children: [
                                             getBodyText(
-                                                "Sensor: ${lastMeasures[index].sensorName}",
+                                                "Sensor: ${getSensorName(lastMeasures[index].sensorName)}",
                                                 true),
                                             lastMeasures[index]
                                                         .date
@@ -245,11 +245,11 @@ Widget getVerticalList(
                                                         .hour >
                                                     12
                                                 ? getBodyText(
-                                                    "${lastMeasures[index].date.toDate().day} de ${obtenerNombreMes(lastMeasures[index].date.toDate().month)}  "
+                                                    "${lastMeasures[index].date.toDate().day} de ${getMonthName(lastMeasures[index].date.toDate().month)}  "
                                                     "${lastMeasures[index].date.toDate().hour - 12}:${lastMeasures[index].date.toDate().minute} p.m",
                                                     false)
                                                 : getBodyText(
-                                                    "${lastMeasures[index].date.toDate().day} de ${obtenerNombreMes(lastMeasures[index].date.toDate().month)}  "
+                                                    "${lastMeasures[index].date.toDate().day} de ${getMonthName(lastMeasures[index].date.toDate().month)}  "
                                                     "${lastMeasures[index].date.toDate().hour}:${lastMeasures[index].date.toDate().minute} a.m",
                                                     false),
                                             Column(
@@ -312,7 +312,6 @@ Icon getTitleIcon(String title) {
 
 String getUnitMeasure(String measure) {
   String unitMeasure;
-
   switch (measure) {
     case "Humedad":
       unitMeasure = "%";
@@ -335,8 +334,27 @@ String getUnitMeasure(String measure) {
     default:
       unitMeasure = "";
   }
-
   return unitMeasure;
+}
+
+String getSensorName(String sensor) {
+  String sensorName = "";
+  switch (sensor) {
+    case "sensorOne":
+      sensorName = "Primer Sensor";
+      break;
+    case "sensorTwo":
+      sensorName = "Segundo Sensor";
+      break;
+    case "sensorThree":
+      sensorName = "Tercer Sensor";
+      break;
+    case "sensorFour":
+      sensorName = "Cuarto Sensor";
+      break;
+    default:
+  }
+  return sensorName;
 }
 
 String translateTitle(String title) {
