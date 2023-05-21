@@ -341,16 +341,16 @@ String getSensorName(String sensor) {
   String sensorName = "";
   switch (sensor) {
     case "sensorOne":
-      sensorName = "Primer Sensor";
+      sensorName = "Uno";
       break;
     case "sensorTwo":
-      sensorName = "Segundo Sensor";
+      sensorName = "Dos";
       break;
     case "sensorThree":
-      sensorName = "Tercer Sensor";
+      sensorName = "Tres";
       break;
     case "sensorFour":
-      sensorName = "Cuarto Sensor";
+      sensorName = "Cuatro";
       break;
     default:
   }

@@ -41,7 +41,7 @@ class _UserLimitsViewState extends State<UserLimitsView> {
           child: TitledSlider(
             setValues: setValues,
             title: "Húmedad del suelo",
-            max: 100,
+            max: 3000,
             limit: widget.limit,
           ),
         ),
@@ -95,7 +95,7 @@ class TitledSlider extends StatefulWidget {
 
 class _TitledSliderState extends State<TitledSlider> {
   double max = 0;
-  double min = 0;
+  double min = 1100;
 
   String getValueTag(int value, String title) {
     String tag = "";

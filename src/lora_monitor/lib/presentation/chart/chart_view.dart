@@ -260,7 +260,8 @@ class _ChartViewState extends State<ChartView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  getBodyText(getSensorName(widget.sensorName), false),
+                  getBodyText(
+                      "Sensor: ${getSensorName(widget.sensorName)}", false),
                   Center(
                       child: DropdownCustomButton(
                           options: options,
