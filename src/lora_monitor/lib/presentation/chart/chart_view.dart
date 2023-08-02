@@ -34,6 +34,7 @@ class _ChartViewState extends State<ChartView> {
     ChartRepo repo = ChartRepo();
     List<Measure> measures =
         await repo.getChartData(widget.sensorName, fromDate, toDate);
+
     if (oneDay) {
       List<Measure> todayMeasures = [];
       for (var measure in measures) {
@@ -72,7 +73,12 @@ class _ChartViewState extends State<ChartView> {
       case "m":
         oneMonth = true;
         DateTime now = DateTime.now();
-        DateTime oneMonthAgo = DateTime(now.year, now.month - 1, now.day)
+
+        // Original
+        // DateTime oneMonthAgo = DateTime(now.year, now.month - 1, now.day)
+
+        // ver 3 meses de mediciones
+        DateTime oneMonthAgo = DateTime(now.year, now.month - 3, now.day)
             .subtract(Duration(days: now.day));
         loadData(oneMonthAgo, DateTime.now());
         break;
@@ -282,7 +288,7 @@ class _ChartViewState extends State<ChartView> {
                               rangePadding: ChartRangePadding.additional,
                               dateFormat: DateFormat.jm()),
                           primaryYAxis: NumericAxis(
-                              labelFormat: '{value}$currenUnitMeasure',
+                              labelFormat: '{value} $currenUnitMeasure',
                               borderColor: Colors.blue),
                           series: <ChartSeries<ChartData, DateTime>>[
                             LineSeries<ChartData, DateTime>(
@@ -302,7 +308,7 @@ class _ChartViewState extends State<ChartView> {
                                   rangePadding: ChartRangePadding.additional,
                                   dateFormat: DateFormat('dd MMMM', 'es')),
                               primaryYAxis: NumericAxis(
-                                  labelFormat: '{value}$currenUnitMeasure',
+                                  labelFormat: '{value} $currenUnitMeasure',
                                   borderColor: Colors.blue),
                               series: <ChartSeries<ChartData, DateTime>>[
                                 LineSeries<ChartData, DateTime>(

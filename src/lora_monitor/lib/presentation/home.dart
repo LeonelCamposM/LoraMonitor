@@ -6,6 +6,7 @@ import 'package:lora_monitor/presentation/chart/chart_view.dart';
 import 'package:lora_monitor/presentation/chart/connection_stream.dart';
 import 'package:lora_monitor/presentation/core/text.dart';
 import 'core/size_config.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 enum NavigationState {
   home,
@@ -68,8 +69,8 @@ class MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    initializeDateFormatting();
     Widget currentPage;
-
     switch (navState) {
       case NavigationState.home:
         switch (homeState) {
