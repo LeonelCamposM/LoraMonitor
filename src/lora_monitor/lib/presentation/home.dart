@@ -3,7 +3,6 @@ import 'package:lora_monitor/infraestructure/dashboard/dashboard_stream.dart';
 import 'package:lora_monitor/infraestructure/settings/user_limits_stream.dart';
 import 'package:lora_monitor/presentation/ap_sensor/ap_sensor_repo.dart';
 import 'package:lora_monitor/presentation/chart/chart_view.dart';
-import 'package:lora_monitor/presentation/core/text.dart';
 import 'core/size_config.dart';
 import 'package:intl/date_symbol_data_local.dart';
 

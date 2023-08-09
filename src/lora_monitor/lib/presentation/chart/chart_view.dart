@@ -40,26 +40,20 @@ class _ChartViewState extends State<ChartView> {
   DateTime toDate = DateTime.now();
 
   void loadData() async {
-    print("LOADING  " +
-        fromDate.toIso8601String() +
-        "  " +
-        toDate.toIso8601String());
     ChartRepo repo = ChartRepo();
 
     if (fromDate == toDate) {
-      toDate = fromDate.add(Duration(hours: 23));
+      toDate = fromDate.add(const Duration(hours: 23));
     }
     List<Measure> measures =
         await repo.getChartData(widget.sensorName, fromDate, toDate);
 
     List<DateTime> measuresDates = [];
     for (var element in measures) {
-      print(element.date);
       measuresDates.add(element.date.toDate());
     }
 
     oneDay = sameDay(measuresDates);
-    print(oneDay);
 
     setState(() {
       sensorMeasures = measures;
