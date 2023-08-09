@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lora_monitor/domain/measure.dart';
+import 'package:lora_monitor/presentation/chart/date.dart';
 import 'package:lora_monitor/presentation/chart/dropdown.dart';
 import 'package:lora_monitor/presentation/core/loading.dart';
 import 'package:lora_monitor/presentation/core/text.dart';
@@ -8,6 +9,12 @@ import 'package:lora_monitor/presentation/dashboard/dashboard_view.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../infraestructure/chart_repo.dart';
 import '../core/size_config.dart';
+
+enum ChartType {
+  days,
+  weeks,
+  months,
+}
 
 class ChartView extends StatefulWidget {
   ChartView({super.key, required this.sensorName});
@@ -24,26 +31,35 @@ class _ChartViewState extends State<ChartView> {
   List<String> options = [];
   String currentMeasure = "";
   String currenUnitMeasure = "";
-  bool oneDay = true;
-  bool oneWeek = false;
-  bool oneMonth = false;
+  bool oneDay = false;
+
   bool loading = true;
   bool firstLoad = true;
 
-  void loadData(DateTime fromDate, DateTime toDate) async {
+  DateTime fromDate = DateTime.now();
+  DateTime toDate = DateTime.now();
+
+  void loadData() async {
+    print("LOADING  " +
+        fromDate.toIso8601String() +
+        "  " +
+        toDate.toIso8601String());
     ChartRepo repo = ChartRepo();
+
+    if (fromDate == toDate) {
+      toDate = fromDate.add(Duration(hours: 23));
+    }
     List<Measure> measures =
         await repo.getChartData(widget.sensorName, fromDate, toDate);
 
-    if (oneDay) {
-      List<Measure> todayMeasures = [];
-      for (var measure in measures) {
-        if (isToday(measure.date.toDate())) {
-          todayMeasures.add(measure);
-        }
-      }
-      measures = todayMeasures;
+    List<DateTime> measuresDates = [];
+    for (var element in measures) {
+      print(element.date);
+      measuresDates.add(element.date.toDate());
     }
+
+    oneDay = sameDay(measuresDates);
+    print(oneDay);
 
     setState(() {
       sensorMeasures = measures;
@@ -63,41 +79,26 @@ class _ChartViewState extends State<ChartView> {
     initialFormat();
   }
 
-  void updateChartMeasure(String time) {
-    oneDay = false;
-    oneMonth = false;
-    oneWeek = false;
+  void updatefromDate(DateTime date) {
     chartData.clear();
     sensorMeasures.clear();
-    switch (time) {
-      case "m":
-        oneMonth = true;
-        DateTime now = DateTime.now();
-
-        // Original
-        // DateTime oneMonthAgo = DateTime(now.year, now.month - 1, now.day)
-
-        // ver 3 meses de mediciones
-        DateTime oneMonthAgo = DateTime(now.year, now.month - 3, now.day)
-            .subtract(Duration(days: now.day));
-        loadData(oneMonthAgo, DateTime.now());
-        break;
-      case "w":
-        oneWeek = true;
-        loadData(
-            DateTime.now().subtract(const Duration(days: 7)), DateTime.now());
-        break;
-      case "d":
-        oneDay = true;
-        DateTime now = DateTime.now();
-        DateTime startOfDay = DateTime(now.year, now.month, now.day, 0, 0, 0);
-        loadData(startOfDay, DateTime.now());
-        break;
-
-      default:
-    }
+    fromDate = date;
+    loadData();
     setState(() {
       loading = true;
+    });
+  }
+
+  void updateToDate(DateTime date) {
+    chartData.clear();
+    sensorMeasures.clear();
+
+    toDate = date;
+    loadData();
+    setState(() {
+      setState(() {
+        loading = true;
+      });
     });
   }
 
@@ -113,6 +114,10 @@ class _ChartViewState extends State<ChartView> {
   }
 
   bool sameDay(List<DateTime> fechas) {
+    if (fechas.isEmpty) {
+      return false;
+    }
+
     DateTime primerDia = fechas[0].toLocal();
     int dia = primerDia.day;
 
@@ -123,37 +128,6 @@ class _ChartViewState extends State<ChartView> {
       }
     }
 
-    return true;
-  }
-
-  bool isSameMonth(List<DateTime> dates) {
-    if (dates.isEmpty) {
-      return false;
-    }
-
-    final firstDate = dates.first;
-
-    for (final date in dates) {
-      if (date.month != firstDate.month || date.year != firstDate.year) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  bool isSameWeek(List<DateTime> dates) {
-    if (dates.isEmpty) {
-      return false;
-    }
-
-    final firstDate = dates.first;
-
-    for (final date in dates) {
-      if (date.weekday != firstDate.weekday ||
-          date.difference(firstDate).inDays >= 7) {
-        return false;
-      }
-    }
     return true;
   }
 
@@ -169,8 +143,6 @@ class _ChartViewState extends State<ChartView> {
         return a.x.compareTo(b.x);
       });
       oneDay = sameDay(days);
-      oneWeek = isSameWeek(days);
-      oneMonth = isSameMonth(days);
     }
   }
 
@@ -250,8 +222,9 @@ class _ChartViewState extends State<ChartView> {
   @override
   void initState() {
     DateTime now = DateTime.now();
-    DateTime startOfDay = DateTime(now.year, now.month, now.day, 0, 0, 0);
-    loadData(startOfDay, DateTime.now());
+    fromDate = DateTime(now.year, now.month, now.day, 0, 0, 0);
+    toDate = DateTime.now();
+    loadData();
     super.initState();
   }
 
@@ -261,7 +234,7 @@ class _ChartViewState extends State<ChartView> {
         ? Center(child: getLoading())
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -298,61 +271,40 @@ class _ChartViewState extends State<ChartView> {
                                 yValueMapper: (ChartData data, _) => data.y),
                           ],
                         )
-                      : oneMonth == false
-                          ? SfCartesianChart(
-                              legend: Legend(
-                                isVisible: true,
-                              ),
-                              tooltipBehavior: widget.tooltipBehavior,
-                              primaryXAxis: DateTimeAxis(
-                                  rangePadding: ChartRangePadding.additional,
-                                  dateFormat: DateFormat('dd MMMM', 'es')),
-                              primaryYAxis: NumericAxis(
-                                  labelFormat: '{value} $currenUnitMeasure',
-                                  borderColor: Colors.blue),
-                              series: <ChartSeries<ChartData, DateTime>>[
-                                LineSeries<ChartData, DateTime>(
-                                    name: currentMeasure,
-                                    dataSource: chartData,
-                                    xValueMapper: (ChartData data, _) => data.x,
-                                    yValueMapper: (ChartData data, _) =>
-                                        data.y),
-                              ],
-                            )
-                          : SfCartesianChart(
-                              legend: Legend(
-                                isVisible: true,
-                              ),
-                              tooltipBehavior: widget.tooltipBehavior,
-                              primaryXAxis: DateTimeAxis(
-                                  rangePadding: ChartRangePadding.additional,
-                                  dateFormat: DateFormat('dd/MM/yyyy')),
-                              primaryYAxis: NumericAxis(
-                                  labelFormat: '{value}$currenUnitMeasure',
-                                  borderColor: Colors.blue),
-                              series: <ChartSeries<ChartData, DateTime>>[
-                                LineSeries<ChartData, DateTime>(
-                                    name: currentMeasure,
-                                    dataSource: chartData,
-                                    xValueMapper: (ChartData data, _) => data.x,
-                                    yValueMapper: (ChartData data, _) =>
-                                        data.y),
-                              ],
-                            )),
+                      : SfCartesianChart(
+                          legend: Legend(
+                            isVisible: true,
+                          ),
+                          tooltipBehavior: widget.tooltipBehavior,
+                          primaryXAxis: DateTimeAxis(
+                              rangePadding: ChartRangePadding.additional,
+                              dateFormat: DateFormat('dd MMMM', 'es')),
+                          primaryYAxis: NumericAxis(
+                              labelFormat: '{value} $currenUnitMeasure',
+                              borderColor: Colors.blue),
+                          series: <ChartSeries<ChartData, DateTime>>[
+                            LineSeries<ChartData, DateTime>(
+                                name: currentMeasure,
+                                dataSource: chartData,
+                                xValueMapper: (ChartData data, _) => data.x,
+                                yValueMapper: (ChartData data, _) => data.y),
+                          ],
+                        )),
               SizedBox(
                 width: SizeConfig.blockSizeHorizontal * 50,
                 height: SizeConfig.blockSizeVertical * 7,
               ),
               Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                ElevatedButton(
-                    onPressed: (() => {updateChartMeasure("m")}),
-                    child: const Text("Mes")),
-                ElevatedButton(
-                    onPressed: (() => {updateChartMeasure("w")}),
-                    child: const Text("Semana")),
-                ElevatedButton(
-                    onPressed: (() => {updateChartMeasure("d")}),
-                    child: const Text("Día")),
+                DatePicker(
+                  title: 'Desde',
+                  callback: updatefromDate,
+                  selectedDate: fromDate,
+                ),
+                DatePicker(
+                  title: 'Hasta',
+                  callback: updateToDate,
+                  selectedDate: toDate,
+                )
               ])
             ],
           );
