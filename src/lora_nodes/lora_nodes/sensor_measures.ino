@@ -59,38 +59,20 @@ float getBMPHumidity() {
   return bme.readHumidity();
 }
 
-const int moisturePin = 4;
-int maxMoisture = 4095;  // dry
-int minMoisture = 0;  // wet
-
+const int moisturePin = 36;
 double getMoisturePercentage() {
   double sensorValue = analogRead(moisturePin);
-#ifdef DEBUG 
+#ifdef DEBUG
   Serial.println(sensorValue);
 #endif
-  double percentageHumidity = map(sensorValue, minMoisture, maxMoisture, 100, 0);
-  if (percentageHumidity < 0 || sensorValue == 0) {
-    percentageHumidity = 0;
-  }
-  if (percentageHumidity > 100) {
-    percentageHumidity = 100;
-  }
-  return percentageHumidity;
+  return sensorValue;
 }
 
-const int raindropsPin = 36;
-int maxRaindrops = 4095;  // dry
-int minRaindrops = 1263;  // wet
-
+const int raindropsPin = 4;
 int getRaindropPercentage() {
   int sensorValue = analogRead(raindropsPin);
+#ifdef DEBUG
   Serial.println(sensorValue);
-  int percentageRaindrops = map(sensorValue, minRaindrops, maxRaindrops, 100, 0);
-  if (percentageRaindrops < 0 || sensorValue == 0) {
-    percentageRaindrops = 0;
-  }
-  if (percentageRaindrops > 100) {
-    percentageRaindrops = 100;
-  }
-  return percentageRaindrops;
+#endif
+  return sensorValue;
 }

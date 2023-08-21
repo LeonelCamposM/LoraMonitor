@@ -5,7 +5,7 @@
 #include <Adafruit_SSD1306.h>
 
 #define DEBUG
-// #define SENSOR_NODE
+#define SENSOR_NODE
 #define uS_TO_S_FACTOR 1000000
 #define TIME_TO_SLEEP 2000
 
@@ -49,7 +49,6 @@ void setup() {
     ;
 #endif
 #ifdef SENSOR_NODE
-  Serial.println(analogRead(4));
   esp_sleep_enable_timer_wakeup(3600000000);
   if (startLora()) {
     StaticJsonDocument<200> message;
@@ -74,7 +73,7 @@ void setup() {
     message["battery"] = -1.01;
     message["date"] = "today";
     message["rain"] =  getRaindropPercentage();
-    message["soilMoisture"] = analogRead(4);
+    message["soilMoisture"] = getMoisturePercentage();
     message["sensorName"] = sensorName;
     String jsonString;
     serializeJson(message, jsonString);
@@ -112,8 +111,6 @@ void loop() {
       done = true;
     }
   }
-
-
 
   if (start_lora) {
     receiveLora();

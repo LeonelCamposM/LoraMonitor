@@ -7,7 +7,9 @@ import 'package:lora_monitor/presentation/core/loading.dart';
 import 'package:lora_monitor/presentation/core/text.dart';
 import 'package:lora_monitor/presentation/dashboard/dashboard_view.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:connectivity/connectivity.dart';
 import '../../infraestructure/chart_repo.dart';
+import 'package:http/http.dart' as http;
 import '../core/size_config.dart';
 
 enum ChartType {
@@ -35,6 +37,7 @@ class _ChartViewState extends State<ChartView> {
 
   bool loading = true;
   bool firstLoad = true;
+  bool connectedToInternet = false;
 
   DateTime fromDate = DateTime.now();
   DateTime toDate = DateTime.now();
@@ -199,6 +202,42 @@ class _ChartViewState extends State<ChartView> {
     });
   }
 
+  Future<bool> hasInternetConnection() async {
+    try {
+      final uri = Uri.parse('https://www.google.com');
+      final response = await http.head(uri).timeout(Duration(seconds: 10));
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  void checkInternetAndLoadData() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      bool hasInternet = await hasInternetConnection();
+
+      if (hasInternet) {
+        setState(() {
+          connectedToInternet = true;
+          loadData();
+        });
+      } else {
+        setState(() {
+          connectedToInternet = false;
+          loading = false;
+        });
+      }
+    } else {
+      setState(() {
+        connectedToInternet = false;
+        loading = false;
+      });
+    }
+  }
+
   @override
   void setState(VoidCallback fn) {
     if (mounted) {
@@ -218,7 +257,7 @@ class _ChartViewState extends State<ChartView> {
     DateTime now = DateTime.now();
     fromDate = DateTime(now.year, now.month, now.day, 0, 0, 0);
     toDate = DateTime.now();
-    loadData();
+    checkInternetAndLoadData();
     super.initState();
   }
 
@@ -226,82 +265,93 @@ class _ChartViewState extends State<ChartView> {
   Widget build(BuildContext context) {
     return loading == true
         ? Center(child: getLoading())
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        : connectedToInternet == false
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  getBodyText(
-                      "Sensor: ${getSensorName(widget.sensorName)}", false),
-                  Center(
-                      child: DropdownCustomButton(
-                          options: options,
-                          onChanged: onMeasureSelected,
-                          selectedValue: currentMeasure)),
+                  Center(child: getTitleText("Conectese a internet", false)),
                 ],
-              ),
-              SizedBox(
-                  width: SizeConfig.blockSizeHorizontal * 90,
-                  height: SizeConfig.blockSizeVertical * 50,
-                  child: oneDay == true
-                      ? SfCartesianChart(
-                          legend: Legend(
-                            isVisible: true,
-                          ),
-                          tooltipBehavior: widget.tooltipBehavior,
-                          primaryXAxis: DateTimeAxis(
-                              rangePadding: ChartRangePadding.additional,
-                              dateFormat: DateFormat.jm()),
-                          primaryYAxis: NumericAxis(
-                              labelFormat: '{value} $currenUnitMeasure',
-                              borderColor: Colors.blue),
-                          series: <ChartSeries<ChartData, DateTime>>[
-                            LineSeries<ChartData, DateTime>(
-                                name: currentMeasure,
-                                dataSource: chartData,
-                                xValueMapper: (ChartData data, _) => data.x,
-                                yValueMapper: (ChartData data, _) => data.y),
-                          ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      getBodyText(
+                          "Sensor: ${getSensorName(widget.sensorName)}", false),
+                      Center(
+                          child: DropdownCustomButton(
+                              options: options,
+                              onChanged: onMeasureSelected,
+                              selectedValue: currentMeasure)),
+                    ],
+                  ),
+                  SizedBox(
+                      width: SizeConfig.blockSizeHorizontal * 90,
+                      height: SizeConfig.blockSizeVertical * 50,
+                      child: oneDay == true
+                          ? SfCartesianChart(
+                              legend: Legend(
+                                isVisible: true,
+                              ),
+                              tooltipBehavior: widget.tooltipBehavior,
+                              primaryXAxis: DateTimeAxis(
+                                  rangePadding: ChartRangePadding.additional,
+                                  dateFormat: DateFormat.jm()),
+                              primaryYAxis: NumericAxis(
+                                  labelFormat: '{value} $currenUnitMeasure',
+                                  borderColor: Colors.blue),
+                              series: <ChartSeries<ChartData, DateTime>>[
+                                LineSeries<ChartData, DateTime>(
+                                    name: currentMeasure,
+                                    dataSource: chartData,
+                                    xValueMapper: (ChartData data, _) => data.x,
+                                    yValueMapper: (ChartData data, _) =>
+                                        data.y),
+                              ],
+                            )
+                          : SfCartesianChart(
+                              legend: Legend(
+                                isVisible: true,
+                              ),
+                              tooltipBehavior: widget.tooltipBehavior,
+                              primaryXAxis: DateTimeAxis(
+                                  rangePadding: ChartRangePadding.additional,
+                                  dateFormat: DateFormat('dd MMMM', 'es')),
+                              primaryYAxis: NumericAxis(
+                                  labelFormat: '{value} $currenUnitMeasure',
+                                  borderColor: Colors.blue),
+                              series: <ChartSeries<ChartData, DateTime>>[
+                                LineSeries<ChartData, DateTime>(
+                                    name: currentMeasure,
+                                    dataSource: chartData,
+                                    xValueMapper: (ChartData data, _) => data.x,
+                                    yValueMapper: (ChartData data, _) =>
+                                        data.y),
+                              ],
+                            )),
+                  SizedBox(
+                    width: SizeConfig.blockSizeHorizontal * 50,
+                    height: SizeConfig.blockSizeVertical * 7,
+                  ),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        DatePicker(
+                          title: 'Desde',
+                          callback: updatefromDate,
+                          selectedDate: fromDate,
+                        ),
+                        DatePicker(
+                          title: 'Hasta',
+                          callback: updateToDate,
+                          selectedDate: toDate,
                         )
-                      : SfCartesianChart(
-                          legend: Legend(
-                            isVisible: true,
-                          ),
-                          tooltipBehavior: widget.tooltipBehavior,
-                          primaryXAxis: DateTimeAxis(
-                              rangePadding: ChartRangePadding.additional,
-                              dateFormat: DateFormat('dd MMMM', 'es')),
-                          primaryYAxis: NumericAxis(
-                              labelFormat: '{value} $currenUnitMeasure',
-                              borderColor: Colors.blue),
-                          series: <ChartSeries<ChartData, DateTime>>[
-                            LineSeries<ChartData, DateTime>(
-                                name: currentMeasure,
-                                dataSource: chartData,
-                                xValueMapper: (ChartData data, _) => data.x,
-                                yValueMapper: (ChartData data, _) => data.y),
-                          ],
-                        )),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal * 50,
-                height: SizeConfig.blockSizeVertical * 7,
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                DatePicker(
-                  title: 'Desde',
-                  callback: updatefromDate,
-                  selectedDate: fromDate,
-                ),
-                DatePicker(
-                  title: 'Hasta',
-                  callback: updateToDate,
-                  selectedDate: toDate,
-                )
-              ])
-            ],
-          );
+                      ])
+                ],
+              );
   }
 }
 

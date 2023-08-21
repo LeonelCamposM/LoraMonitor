@@ -107,11 +107,7 @@ class PercentageWidget extends StatelessWidget {
               getBodyText(title, false),
               Row(
                 children: [
-                  title == "Lluvia"
-                      ? percentaje >= 80
-                          ? getBodyText("Sí", false)
-                          : getBodyText("No", false)
-                      : getBodyText("${percentaje.ceil()} $measureSign", false)
+                  getBodyText("${percentaje.ceil()} $measureSign", false)
                 ],
               ),
             ],
