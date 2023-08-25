@@ -205,7 +205,8 @@ class _ChartViewState extends State<ChartView> {
   Future<bool> hasInternetConnection() async {
     try {
       final uri = Uri.parse('https://www.google.com');
-      final response = await http.head(uri).timeout(Duration(seconds: 10));
+      final response =
+          await http.head(uri).timeout(const Duration(seconds: 10));
       return response.statusCode == 200;
     } catch (e) {
       return false;

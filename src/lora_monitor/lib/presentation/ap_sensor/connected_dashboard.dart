@@ -31,12 +31,16 @@ class _ConnectedDashboardState extends State<ConnectedDashboard> {
       messages.add(line);
     }
     httpClient.close();
-
+    print(messages);
     if (messages.first != "error") {
       List<Measure> lastMeasures = [];
       for (var message in messages) {
+        print(message);
+        print(lastMeasures);
         if (message == "/") {
-          lastMeasures.add(measures.last);
+          if (measures.isNotEmpty) {
+            lastMeasures.add(measures.last);
+          }
         } else {
           message = message.replaceAll(";", "");
           Map map = jsonDecode(message);
