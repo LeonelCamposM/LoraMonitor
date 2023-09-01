@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lora_monitor/presentation/home.dart';
 import 'firebase_options.dart';
@@ -14,5 +13,5 @@ void main() async {
     persistenceEnabled: true,
     cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
   );
-  initializeDateFormatting('es', null).then((_) => runApp(const Home()));
+  runApp(const Home());
 }

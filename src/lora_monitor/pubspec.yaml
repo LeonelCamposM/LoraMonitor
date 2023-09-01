@@ -33,12 +33,16 @@ dependencies:
     sdk: flutter
 
   firebase_core: ^2.9.0
-  intl: ^0.18.0
+  intl: ^0.17.0
   cloud_firestore: ^4.5.0
   http: ^0.13.5
   google_fonts: ^4.0.3
   syncfusion_flutter_charts: ^21.1.38
   app_settings: ^4.2.0
+  flutter_localizations:
+    sdk: flutter
+  connectivity: ^3.0.6
+
 
 dev_dependencies:
   flutter_test:

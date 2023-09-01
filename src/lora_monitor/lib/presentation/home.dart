@@ -4,6 +4,7 @@ import 'package:lora_monitor/infraestructure/settings/user_limits_stream.dart';
 import 'package:lora_monitor/presentation/ap_sensor/ap_sensor_repo.dart';
 import 'package:lora_monitor/presentation/chart/chart_view.dart';
 import 'core/size_config.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 enum NavigationState {
   home,
@@ -19,14 +20,6 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      localizationsDelegates: const [
-        DefaultMaterialLocalizations.delegate,
-        DefaultWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', 'US'),
-        Locale('es', 'ES'),
-      ],
       title: 'PlantMonitor',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -74,8 +67,8 @@ class MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    initializeDateFormatting();
     Widget currentPage;
-
     switch (navState) {
       case NavigationState.home:
         switch (homeState) {
@@ -95,7 +88,6 @@ class MyHomePageState extends State<MyHomePage> {
         break;
       case NavigationState.measures:
         changeTitle("Recolección de datos");
-        //currentPage = const Text("home");
         currentPage = const APSensorRepo();
         break;
     }
@@ -127,6 +119,7 @@ class MyHomePageState extends State<MyHomePage> {
         onTap: (pagina) {
           setState(() {
             navState = NavigationState.values[pagina];
+            homeState = HomeState.dashboard;
           });
         },
       ),

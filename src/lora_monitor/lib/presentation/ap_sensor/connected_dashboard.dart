@@ -31,12 +31,16 @@ class _ConnectedDashboardState extends State<ConnectedDashboard> {
       messages.add(line);
     }
     httpClient.close();
-
+    print(messages);
     if (messages.first != "error") {
       List<Measure> lastMeasures = [];
       for (var message in messages) {
+        print(message);
+        print(lastMeasures);
         if (message == "/") {
-          lastMeasures.add(measures.last);
+          if (measures.isNotEmpty) {
+            lastMeasures.add(measures.last);
+          }
         } else {
           message = message.replaceAll(";", "");
           Map map = jsonDecode(message);
@@ -58,13 +62,9 @@ class _ConnectedDashboardState extends State<ConnectedDashboard> {
       final response = await http.get(
         Uri.parse('http://192.168.1.22:80/deleteAllData'),
       );
-      if (response.statusCode == 200) {
-        print("data deleted");
-      }
-    } catch (e) {
-      print("catch");
-      print(e);
-    }
+      if (response.statusCode == 200) {}
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   void uploadNewMeasures(context) async {
@@ -73,7 +73,7 @@ class _ConnectedDashboardState extends State<ConnectedDashboard> {
       for (var element in measures) {
         chartRepo.addMeasure(element);
       }
-      //sendDeleteData();
+      sendDeleteData();
     }
     setState(() {
       loading = false;

@@ -6,42 +6,53 @@ import 'package:lora_monitor/presentation/core/loading.dart';
 import 'package:lora_monitor/presentation/dashboard/dashboard_view.dart';
 
 class DashboardStream extends StatelessWidget {
-  const DashboardStream({super.key, required this.changePage});
+  DashboardStream({super.key, required this.changePage});
   final Function changePage;
+
+  final Stream<QuerySnapshot> _limitStream = FirebaseFirestore.instance
+      .collection("users/yuY2SQJgcOYgPUKvUdRx/userLimits")
+      .snapshots();
+  final Stream<QuerySnapshot> _lastMeasuresStream = FirebaseFirestore.instance
+      .collection("users/yuY2SQJgcOYgPUKvUdRx/lastMeasures")
+      .snapshots();
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection("users/yuY2SQJgcOYgPUKvUdRx/userLimits")
-          .snapshots(),
-      builder: (BuildContext context,
-          AsyncSnapshot<QuerySnapshot> userLimitssnapshot) {
-        if (!userLimitssnapshot.hasData) {
+      stream: _limitStream,
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return const Text('');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return getLoading();
         }
-        return FutureBuilder<QuerySnapshot>(
-          future: FirebaseFirestore.instance
-              .collection("users/yuY2SQJgcOYgPUKvUdRx/lastMeasures")
-              .get(),
-          builder: (BuildContext context,
-              AsyncSnapshot<QuerySnapshot> lastMeasuressnapshot) {
-            if (!lastMeasuressnapshot.hasData) {
+
+        List<UserLimit> userLimits = snapshot.data!.docs
+            .map(
+                (doc) => UserLimit.fromJson(doc.data() as Map<String, dynamic>))
+            .toList();
+
+        return StreamBuilder<QuerySnapshot>(
+          stream: _lastMeasuresStream,
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return const Text('');
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return getLoading();
             }
 
-            List<UserLimit> userLimits = [];
-            for (var doc in userLimitssnapshot.data!.docs) {
-              userLimits
-                  .add(UserLimit.fromJson(doc.data() as Map<dynamic, dynamic>));
-            }
-            List<Measure> measureList = [];
-            for (var doc in lastMeasuressnapshot.data!.docs) {
-              measureList
-                  .add(Measure.fromJson(doc.data() as Map<dynamic, dynamic>));
-            }
+            List<Measure> lastMeasures = snapshot.data!.docs
+                .map((doc) =>
+                    Measure.fromJson(doc.data() as Map<String, dynamic>))
+                .toList();
+
             return DashboardView(
-                measure: measureList,
+                measure: lastMeasures,
                 limits: userLimits,
                 changePage: changePage);
           },

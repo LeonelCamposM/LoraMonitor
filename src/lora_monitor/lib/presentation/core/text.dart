@@ -7,8 +7,8 @@ Widget getBodyText(String text, bool bold) {
     textWidget = Text(
       text,
       style: GoogleFonts.heebo(
-        height: 30,
-        fontSize: 12,
+        fontWeight: FontWeight.bold,
+        fontSize: 15,
       ),
     );
   } else {

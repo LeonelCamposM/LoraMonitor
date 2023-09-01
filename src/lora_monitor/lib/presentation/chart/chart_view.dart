@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lora_monitor/domain/measure.dart';
+import 'package:lora_monitor/presentation/chart/date.dart';
 import 'package:lora_monitor/presentation/chart/dropdown.dart';
 import 'package:lora_monitor/presentation/core/loading.dart';
+import 'package:lora_monitor/presentation/core/text.dart';
 import 'package:lora_monitor/presentation/dashboard/dashboard_view.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:connectivity/connectivity.dart';
 import '../../infraestructure/chart_repo.dart';
+import 'package:http/http.dart' as http;
 import '../core/size_config.dart';
+
+enum ChartType {
+  days,
+  weeks,
+  months,
+}
 
 class ChartView extends StatefulWidget {
   ChartView({super.key, required this.sensorName});
@@ -22,16 +32,32 @@ class _ChartViewState extends State<ChartView> {
   List<ChartData> chartData = [];
   List<String> options = [];
   String currentMeasure = "";
-  bool oneDay = true;
-  bool oneWeek = false;
-  bool oneMonth = false;
+  String currenUnitMeasure = "";
+  bool oneDay = false;
+
   bool loading = true;
   bool firstLoad = true;
+  bool connectedToInternet = false;
 
-  void loadData(DateTime fromDate, DateTime toDate) async {
+  DateTime fromDate = DateTime.now();
+  DateTime toDate = DateTime.now();
+
+  void loadData() async {
     ChartRepo repo = ChartRepo();
+
+    if (fromDate == toDate) {
+      toDate = fromDate.add(const Duration(hours: 23));
+    }
     List<Measure> measures =
         await repo.getChartData(widget.sensorName, fromDate, toDate);
+
+    List<DateTime> measuresDates = [];
+    for (var element in measures) {
+      measuresDates.add(element.date.toDate());
+    }
+
+    oneDay = sameDay(measuresDates);
+
     setState(() {
       sensorMeasures = measures;
       loading = false;
@@ -50,39 +76,45 @@ class _ChartViewState extends State<ChartView> {
     initialFormat();
   }
 
-  void updateChartMeasure(String time) {
-    oneDay = false;
-    oneMonth = false;
-    oneWeek = false;
+  void updatefromDate(DateTime date) {
     chartData.clear();
     sensorMeasures.clear();
-    switch (time) {
-      case "m":
-        oneMonth = true;
-        DateTime now = DateTime.now();
-        DateTime oneMonthAgo = DateTime(now.year, now.month - 1, now.day)
-            .subtract(Duration(days: now.day));
-        loadData(oneMonthAgo, DateTime.now());
-        break;
-      case "w":
-        oneWeek = true;
-        loadData(
-            DateTime.now().subtract(const Duration(days: 7)), DateTime.now());
-        break;
-      case "d":
-        oneDay = true;
-        loadData(
-            DateTime.now().subtract(const Duration(days: 1)), DateTime.now());
-        break;
-
-      default:
-    }
+    fromDate = date;
+    loadData();
     setState(() {
       loading = true;
     });
   }
 
+  void updateToDate(DateTime date) {
+    chartData.clear();
+    sensorMeasures.clear();
+
+    toDate = date;
+    loadData();
+    setState(() {
+      setState(() {
+        loading = true;
+      });
+    });
+  }
+
+  bool isToday(DateTime nextReport) {
+    DateTime today = DateTime.now();
+    bool result = false;
+    if (today.month == nextReport.month &&
+        today.day == nextReport.day &&
+        today.year == nextReport.year) {
+      result = true;
+    }
+    return result;
+  }
+
   bool sameDay(List<DateTime> fechas) {
+    if (fechas.isEmpty) {
+      return false;
+    }
+
     DateTime primerDia = fechas[0].toLocal();
     int dia = primerDia.day;
 
@@ -93,37 +125,6 @@ class _ChartViewState extends State<ChartView> {
       }
     }
 
-    return true;
-  }
-
-  bool isSameMonth(List<DateTime> dates) {
-    if (dates.isEmpty) {
-      return false;
-    }
-
-    final firstDate = dates.first;
-
-    for (final date in dates) {
-      if (date.month != firstDate.month || date.year != firstDate.year) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  bool isSameWeek(List<DateTime> dates) {
-    if (dates.isEmpty) {
-      return false;
-    }
-
-    final firstDate = dates.first;
-
-    for (final date in dates) {
-      if (date.weekday != firstDate.weekday ||
-          date.difference(firstDate).inDays >= 7) {
-        return false;
-      }
-    }
     return true;
   }
 
@@ -139,8 +140,6 @@ class _ChartViewState extends State<ChartView> {
         return a.x.compareTo(b.x);
       });
       oneDay = sameDay(days);
-      oneWeek = isSameWeek(days);
-      oneMonth = isSameMonth(days);
     }
   }
 
@@ -198,8 +197,46 @@ class _ChartViewState extends State<ChartView> {
       default:
     }
     setState(() {
+      currenUnitMeasure = getUnitMeasure(selectedMeasure);
       currentMeasure = selectedMeasure;
     });
+  }
+
+  Future<bool> hasInternetConnection() async {
+    try {
+      final uri = Uri.parse('https://www.google.com');
+      final response =
+          await http.head(uri).timeout(const Duration(seconds: 10));
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  void checkInternetAndLoadData() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      bool hasInternet = await hasInternetConnection();
+
+      if (hasInternet) {
+        setState(() {
+          connectedToInternet = true;
+          loadData();
+        });
+      } else {
+        setState(() {
+          connectedToInternet = false;
+          loading = false;
+        });
+      }
+    } else {
+      setState(() {
+        connectedToInternet = false;
+        loading = false;
+      });
+    }
   }
 
   @override
@@ -218,7 +255,10 @@ class _ChartViewState extends State<ChartView> {
 
   @override
   void initState() {
-    loadData(DateTime.now().subtract(const Duration(days: 1)), DateTime.now());
+    DateTime now = DateTime.now();
+    fromDate = DateTime(now.year, now.month, now.day, 0, 0, 0);
+    toDate = DateTime.now();
+    checkInternetAndLoadData();
     super.initState();
   }
 
@@ -226,39 +266,33 @@ class _ChartViewState extends State<ChartView> {
   Widget build(BuildContext context) {
     return loading == true
         ? Center(child: getLoading())
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Center(
-                  child: DropdownCustomButton(
-                      options: options,
-                      onChanged: onMeasureSelected,
-                      selectedValue: currentMeasure)),
-              SizedBox(
-                  width: SizeConfig.blockSizeHorizontal * 90,
-                  height: SizeConfig.blockSizeVertical * 50,
-                  child: oneDay == true
-                      ? SfCartesianChart(
-                          legend: Legend(
-                            isVisible: true,
-                          ),
-                          tooltipBehavior: widget.tooltipBehavior,
-                          primaryXAxis: DateTimeAxis(
-                              rangePadding: ChartRangePadding.additional,
-                              dateFormat: DateFormat.jm()),
-                          primaryYAxis: NumericAxis(
-                              labelFormat: '{value}%',
-                              borderColor: Colors.blue),
-                          series: <ChartSeries<ChartData, DateTime>>[
-                            LineSeries<ChartData, DateTime>(
-                                name: currentMeasure,
-                                dataSource: chartData,
-                                xValueMapper: (ChartData data, _) => data.x,
-                                yValueMapper: (ChartData data, _) => data.y),
-                          ],
-                        )
-                      : oneMonth == false
+        : connectedToInternet == false
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(child: getTitleText("Conectese a internet", false)),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      getBodyText(
+                          "Sensor: ${getSensorName(widget.sensorName)}", false),
+                      Center(
+                          child: DropdownCustomButton(
+                              options: options,
+                              onChanged: onMeasureSelected,
+                              selectedValue: currentMeasure)),
+                    ],
+                  ),
+                  SizedBox(
+                      width: SizeConfig.blockSizeHorizontal * 90,
+                      height: SizeConfig.blockSizeVertical * 50,
+                      child: oneDay == true
                           ? SfCartesianChart(
                               legend: Legend(
                                 isVisible: true,
@@ -266,9 +300,9 @@ class _ChartViewState extends State<ChartView> {
                               tooltipBehavior: widget.tooltipBehavior,
                               primaryXAxis: DateTimeAxis(
                                   rangePadding: ChartRangePadding.additional,
-                                  dateFormat: DateFormat('dd MMMM', 'es')),
+                                  dateFormat: DateFormat.jm()),
                               primaryYAxis: NumericAxis(
-                                  labelFormat: '{value}%',
+                                  labelFormat: '{value} $currenUnitMeasure',
                                   borderColor: Colors.blue),
                               series: <ChartSeries<ChartData, DateTime>>[
                                 LineSeries<ChartData, DateTime>(
@@ -286,9 +320,9 @@ class _ChartViewState extends State<ChartView> {
                               tooltipBehavior: widget.tooltipBehavior,
                               primaryXAxis: DateTimeAxis(
                                   rangePadding: ChartRangePadding.additional,
-                                  dateFormat: DateFormat('dd/MM/yyyy')),
+                                  dateFormat: DateFormat('dd MMMM', 'es')),
                               primaryYAxis: NumericAxis(
-                                  labelFormat: '{value}%',
+                                  labelFormat: '{value} $currenUnitMeasure',
                                   borderColor: Colors.blue),
                               series: <ChartSeries<ChartData, DateTime>>[
                                 LineSeries<ChartData, DateTime>(
@@ -299,23 +333,26 @@ class _ChartViewState extends State<ChartView> {
                                         data.y),
                               ],
                             )),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal * 50,
-                height: SizeConfig.blockSizeVertical * 7,
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                ElevatedButton(
-                    onPressed: (() => {updateChartMeasure("m")}),
-                    child: const Text("Mes")),
-                ElevatedButton(
-                    onPressed: (() => {updateChartMeasure("w")}),
-                    child: const Text("Semana")),
-                ElevatedButton(
-                    onPressed: (() => {updateChartMeasure("d")}),
-                    child: const Text("Día")),
-              ])
-            ],
-          );
+                  SizedBox(
+                    width: SizeConfig.blockSizeHorizontal * 50,
+                    height: SizeConfig.blockSizeVertical * 7,
+                  ),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        DatePicker(
+                          title: 'Desde',
+                          callback: updatefromDate,
+                          selectedDate: fromDate,
+                        ),
+                        DatePicker(
+                          title: 'Hasta',
+                          callback: updateToDate,
+                          selectedDate: toDate,
+                        )
+                      ])
+                ],
+              );
   }
 }
 

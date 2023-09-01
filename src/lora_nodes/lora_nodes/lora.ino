@@ -49,56 +49,41 @@ bool validatePacket(String packet) {
   float rain = doc["rain"];
   float soilMoisture = doc["soilMoisture"];
   String sensorName = doc["sensorName"];
-
-  // Validate the values
-  bool validateTemperature = temperature >= -50 && temperature <= 50;
-  bool validatePressure = pressure >= 800 && pressure <= 1200;
-  bool validateAltitude = altitude >= -100 && altitude <= 10000;
-  bool validateHumidity = humidity >= 0 && humidity <= 100;
-  bool validateBattery = battery >= 0 && battery <= 100;
-
-  // Validate date and sensorName
-  bool validateDate = date.length() > 0;
-  bool validateSensorName = sensorName.length() > 0;
   measurePath = sensorName;
 
-  // Validate light, rain and soilMoisture
-  bool validateLight = light >= 0 && light <= 100;
-  bool validateRain = rain >= 0 && rain <= 100;
-  bool validateSoilMoisture = soilMoisture >= 0 && soilMoisture <= 100;
-#ifdef DEBUG
-  if (!validateTemperature) {
-    Serial.println("Temperature validation failed");
+  // Validate the values
+  if (!doc["temperature"].is<float>() || doc["temperature"].isNull()) {
+    return false;
   }
-  if (!validatePressure) {
-    Serial.println("Pressure validation failed");
+  if (!doc["pressure"].is<float>() || doc["pressure"].isNull()) {
+    return false;
   }
-  if (!validateAltitude) {
-    Serial.println("Altitude validation failed");
+  if (!doc["altitude"].is<float>() || doc["altitude"].isNull()) {
+    return false;
   }
-  if (!validateHumidity) {
-    Serial.println("Humidity validation failed");
+  if (!doc["humidity"].is<float>() || doc["humidity"].isNull()) {
+    return false;
   }
-  if (!validateBattery) {
-    Serial.println("Battery validation failed");
+  if (!doc["battery"].is<float>() || doc["battery"].isNull()) {
+    return false;
   }
-  if (!validateDate) {
-    Serial.println("Date validation failed");
+  if (!doc["date"].is<String>() || doc["date"].isNull()) {
+    return false;
   }
-  if (!validateSensorName) {
-    Serial.println("Sensor name validation failed");
+  if (!doc["light"].is<float>() || doc["light"].isNull()) {
+    return false;
   }
-  if (!validateLight) {
-    Serial.println("Light validation failed");
+  if (!doc["rain"].is<float>() || doc["rain"].isNull()) {
+    return false;
   }
-  if (!validateRain) {
-    Serial.println("Rain validation failed");
+  if (!doc["soilMoisture"].is<float>() || doc["soilMoisture"].isNull()) {
+    return false;
   }
-  if (!validateSoilMoisture) {
-    Serial.println("Soil moisture validation failed");
+  if (!doc["sensorName"].is<String>() || doc["sensorName"].isNull()) {
+    return false;
   }
-#endif
-  return validateTemperature && validatePressure && validateAltitude && validateHumidity && validateBattery && validateDate && validateSensorName && validateLight && validateRain && validateSoilMoisture;
+
+  return true;
 }
 
 void handleRequest(int packetSize, String date) {
@@ -111,7 +96,7 @@ void handleRequest(int packetSize, String date) {
   if (validPacket) {
     Serial.println(measurePath);
     saveData("/" + measurePath, packet, date);
-    sendLora("ACK");
+    sendLora("ACK"+measurePath);
 #ifdef DEBUG
     Serial.println("Recieved " + messageSize + " bytes");
     Serial.println(packet);
@@ -121,14 +106,11 @@ void handleRequest(int packetSize, String date) {
 }
 
 String receiveLora() {
-  while (true) {
-    packet = "";
-    int packetSize = LoRa.parsePacket();
-    if (packetSize) {
-      String date = getTime();
-      handleRequest(packetSize, date);
-      break;
-    }
+  packet = "";
+  int packetSize = LoRa.parsePacket();
+  if (packetSize) {
+    String date = getTime();
+    handleRequest(packetSize, date);
   }
   return packet;
 }
@@ -157,7 +139,7 @@ void sendAckLora(String message) {
         while (LoRa.available()) {
           response += (char)LoRa.read();
         }
-        if (response == "ACK") {
+        if (response == "ACK"+sensorName) {
 #ifdef DEBUG
           Serial.println("Message received correctly");
 #endif

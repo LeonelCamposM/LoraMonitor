@@ -78,3 +78,26 @@ String getAllData(String path) {
   }
   return response;
 }
+
+bool toggleMode() {
+  bool apMode = false;
+  sd_spi.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
+  if (!SD.begin(SD_CS, sd_spi)) {
+    Serial.println("SD Card: mounting failed.");
+  } else {
+    if (SD.exists("/mode")) {
+      apMode = true;
+      SD.remove("/mode");
+    } else {
+      apMode = false;
+      File dataFile;
+      dataFile = SD.open("/mode", FILE_WRITE);
+      if (dataFile) {
+        dataFile.close();
+      }
+    }
+    SD.end();
+    sd_spi.end();
+  }
+  return apMode;
+}

@@ -3,7 +3,6 @@ import 'package:lora_monitor/domain/measure.dart';
 import 'package:lora_monitor/domain/user_limit.dart';
 import 'package:lora_monitor/presentation/core/size_config.dart';
 import 'package:lora_monitor/presentation/core/text.dart';
-import 'package:intl/intl.dart';
 import 'package:lora_monitor/presentation/home.dart';
 
 class DashboardView extends StatelessWidget {
@@ -57,10 +56,12 @@ class DashboardIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final isWithinLimits = limit.max > measure && limit.min < measure;
     final barColor = isWithinLimits ? goodColor : badColor;
+    final sign = getUnitMeasure(title);
     return PercentageWidget(
       percentaje: measure,
       title: title,
       barColor: barColor,
+      measureSign: sign,
     );
   }
 }
@@ -70,13 +71,15 @@ class PercentageWidget extends StatelessWidget {
   double percentaje;
   String text = "";
   String title = "";
+  String measureSign = "";
   Color barColor;
 
   PercentageWidget(
       {super.key,
       required this.percentaje,
       required this.title,
-      required this.barColor}) {
+      required this.barColor,
+      required this.measureSign}) {
     text = percentaje.toInt().toString();
   }
 
@@ -103,7 +106,9 @@ class PercentageWidget extends StatelessWidget {
             children: [
               getBodyText(title, false),
               Row(
-                children: [getBodyText("${percentaje.ceil()} %", false)],
+                children: [
+                  getBodyText("${percentaje.ceil()} $measureSign", false)
+                ],
               ),
             ],
           ),
@@ -113,73 +118,163 @@ class PercentageWidget extends StatelessWidget {
   }
 }
 
+String getMonthName(int month) {
+  String monthName;
+  switch (month) {
+    case 1:
+      monthName = 'enero';
+      break;
+    case 2:
+      monthName = 'febrero';
+      break;
+    case 3:
+      monthName = 'marzo';
+      break;
+    case 4:
+      monthName = 'abril';
+      break;
+    case 5:
+      monthName = 'mayo';
+      break;
+    case 6:
+      monthName = 'junio';
+      break;
+    case 7:
+      monthName = 'julio';
+      break;
+    case 8:
+      monthName = 'agosto';
+      break;
+    case 9:
+      monthName = 'septiembre';
+      break;
+    case 10:
+      monthName = 'octubre';
+      break;
+    case 11:
+      monthName = 'noviembre';
+      break;
+    case 12:
+      monthName = 'diciembre';
+      break;
+    default:
+      throw Exception('Número de mes inválido');
+  }
+  return monthName;
+}
+
 Widget getVerticalList(
     List<Measure> lastMeasures, List<UserLimit> limits, Function changePage) {
-  return SizedBox(
-    height: SizeConfig.blockSizeVertical * 85,
-    child: ListView(
-        reverse: false,
-        scrollDirection: Axis.vertical,
-        children: List.generate(
-          lastMeasures.length,
-          (index) => Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: SizedBox(
-              height: SizeConfig.blockSizeVertical * 45,
-              width: SizeConfig.blockSizeHorizontal * 100,
-              child: GestureDetector(
-                onTap: () => {
-                  changePage(HomeState.chart, lastMeasures[index].sensorName)
-                },
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+  return lastMeasures.isEmpty
+      ? Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  height: SizeConfig.blockSizeVertical * 10,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        getTitleText("No hay datos recolectados", false),
+                      ],
+                    )
+                  ],
+                ),
+                SizeConfig.blockSizeVertical <= 8.1
+                    ? SizedBox(
+                        height: SizeConfig.blockSizeVertical * 65,
+                      )
+                    : SizedBox(
+                        height: SizeConfig.blockSizeVertical * 70,
                       ),
-                      elevation: 10,
-                      child: Column(
-                        children: [
-                          Padding(
+              ],
+            ),
+          ],
+        )
+      : SizedBox(
+          height: SizeConfig.blockSizeVertical * 85,
+          child: ListView(
+              reverse: false,
+              scrollDirection: Axis.vertical,
+              children: List.generate(
+                lastMeasures.length,
+                (index) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: SizedBox(
+                      width: SizeConfig.blockSizeHorizontal * 100,
+                      child: GestureDetector(
+                        onTap: () => {
+                          changePage(
+                              HomeState.chart, lastMeasures[index].sensorName)
+                        },
+                        child: Center(
+                          child: Padding(
                             padding: const EdgeInsets.all(6.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  children: [
-                                    getBodyText(
-                                        " ${DateFormat('dd MMMM', 'es').format(lastMeasures[index].date.toDate()).replaceAll(" ", " de ")}"
-                                        " ${DateFormat(DateFormat.jm().pattern).format(lastMeasures[index].date.toDate())}",
-                                        false),
-                                    getBodyText(
-                                        "Sensor: ${lastMeasures[index].sensorName}",
-                                        false),
-                                    Column(
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              elevation: 10,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(6.0),
+                                    child: Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        CircularChartCard(
-                                          sensorMeasure: lastMeasures[index],
-                                          limits: limits,
+                                        Column(
+                                          children: [
+                                            getBodyText(
+                                                "Sensor: ${getSensorName(lastMeasures[index].sensorName)}",
+                                                true),
+                                            lastMeasures[index]
+                                                        .date
+                                                        .toDate()
+                                                        .hour >
+                                                    12
+                                                ? getBodyText(
+                                                    "${lastMeasures[index].date.toDate().day} de ${getMonthName(lastMeasures[index].date.toDate().month)}  "
+                                                    "${lastMeasures[index].date.toDate().hour - 12}:${lastMeasures[index].date.toDate().minute} p.m",
+                                                    false)
+                                                : getBodyText(
+                                                    "${lastMeasures[index].date.toDate().day} de ${getMonthName(lastMeasures[index].date.toDate().month)}  "
+                                                    "${lastMeasures[index].date.toDate().hour}:${lastMeasures[index].date.toDate().minute} a.m",
+                                                    false),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                CircularChartCard(
+                                                  sensorMeasure:
+                                                      lastMeasures[index],
+                                                  limits: limits,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
-                              ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ),
-        )),
-  );
+              )),
+        );
 }
 
 Icon getTitleIcon(String title) {
@@ -209,6 +304,53 @@ Icon getTitleIcon(String title) {
     default:
   }
   return icon;
+}
+
+String getUnitMeasure(String measure) {
+  String unitMeasure;
+  switch (measure) {
+    case "Humedad":
+      unitMeasure = "%";
+      break;
+    case "Luz":
+      unitMeasure = "lux";
+      break;
+    case "Presión":
+      unitMeasure = "hPa";
+      break;
+    case "H. Suelo":
+      unitMeasure = "%";
+      break;
+    case "Altitud":
+      unitMeasure = "m";
+      break;
+    case "Temperatura":
+      unitMeasure = "ºC";
+      break;
+    default:
+      unitMeasure = "";
+  }
+  return unitMeasure;
+}
+
+String getSensorName(String sensor) {
+  String sensorName = "";
+  switch (sensor) {
+    case "sensorOne":
+      sensorName = "Uno";
+      break;
+    case "sensorTwo":
+      sensorName = "Dos";
+      break;
+    case "sensorThree":
+      sensorName = "Tres";
+      break;
+    case "sensorFour":
+      sensorName = "Cuatro";
+      break;
+    default:
+  }
+  return sensorName;
 }
 
 String translateTitle(String title) {
@@ -253,7 +395,7 @@ Widget getVerticalIcon(Measure lastMeasure, Map<String, UserLimit> limitsMap) {
   }
   mapKeys.sort(((a, b) => translateTitle(a).compareTo(translateTitle(b))));
   return SizedBox(
-    height: SizeConfig.blockSizeVertical * 33,
+    height: SizeConfig.blockSizeVertical * (10 * (mapKeys.length / 2).ceil()),
     width: SizeConfig.blockSizeHorizontal * 79,
     child: ListView(
         physics: const NeverScrollableScrollPhysics(),
