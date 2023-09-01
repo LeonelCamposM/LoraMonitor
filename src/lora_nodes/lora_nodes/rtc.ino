@@ -13,13 +13,13 @@ void setupRTC() {
     while (1) delay(10);
   }
 
-  if (!rtc.initialized() ) {
+  if (!rtc.initialized()) {
 #ifdef DEBUG
     Serial.println("RTC is NOT initialized, let's set the time!");
 #endif
     // This line sets the RTC with an explicit date & time, for example to set
     // 4 mes , 27 dia , 2023 año  at 9 : 34 you would call:
-    rtc.adjust(DateTime(2023, 4, 27, 9, 34, 0));
+    rtc.adjust(DateTime(2023, 8, 29, 9, 25, 0));
   }
   rtc.start();
 }
@@ -46,4 +46,28 @@ String getTime() {
   sprintf(buffer, "%04d-%02d-%02d %02d:%02d:%02d", now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
   result = String(buffer);
   return result;
+}
+
+
+unsigned long calculateSleepMicrosUntilNextSend() {
+  DateTime now = rtc.now();
+
+  // Calcula el tiempo restante hasta la próxima hora y el minuto de envío
+  int minutesUntilSend = (sendMinute - now.minute() + 60) % 60;
+  unsigned long sleepMicros = minutesUntilSend * 60000000UL;
+
+  // Si el tiempo de sueño calculado es mayor que una hora en microsegundos, ajusta a una hora
+  if (sleepMicros > 3600000000UL) {
+    sleepMicros = 3600000000UL;  // Una hora en microsegundos
+  }
+
+  if (sleepMicros == 0) {
+    sleepMicros = sleepMicros = 1 * 60000000UL;
+  }
+
+  return sleepMicros;
+}
+
+int getNowMinute() {
+  return rtc.now().minute();
 }
