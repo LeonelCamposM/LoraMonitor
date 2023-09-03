@@ -96,7 +96,13 @@ void handleRequest(int packetSize, String date) {
   if (validPacket) {
     Serial.println(measurePath);
     saveData("/" + measurePath, packet, date);
-    sendLora("ACK"+measurePath);
+    String newDate = getTime();
+    StaticJsonDocument<200> message;
+    message["sensorName"] = measurePath;
+    message["newDate"] = newDate;
+    String response;
+    serializeJson(message, response);
+    sendLora(String(response));
 #ifdef DEBUG
     Serial.println("Recieved " + messageSize + " bytes");
     Serial.println(packet);
