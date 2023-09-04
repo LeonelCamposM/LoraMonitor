@@ -54,44 +54,34 @@ bool validatePacket(String packet)
   measurePath = sensorName;
 
   // Validate the values
-  if (!doc["temperature"].is<float>() || doc["temperature"].isNull())
-  {
+  if (!doc["temperature"].is<float>() || doc["temperature"].isNull()) {
     return false;
   }
-  if (!doc["pressure"].is<float>() || doc["pressure"].isNull())
-  {
+  if (!doc["pressure"].is<float>() || doc["pressure"].isNull()) {
     return false;
   }
-  if (!doc["altitude"].is<float>() || doc["altitude"].isNull())
-  {
+  if (!doc["altitude"].is<float>() || doc["altitude"].isNull()) {
     return false;
   }
-  if (!doc["humidity"].is<float>() || doc["humidity"].isNull())
-  {
+  if (!doc["humidity"].is<float>() || doc["humidity"].isNull()) {
     return false;
   }
-  if (!doc["battery"].is<float>() || doc["battery"].isNull())
-  {
+  if (!doc["battery"].is<float>() || doc["battery"].isNull()) {
     return false;
   }
-  if (!doc["date"].is<String>() || doc["date"].isNull())
-  {
+  if (!doc["date"].is<String>() || doc["date"].isNull()) {
     return false;
   }
-  if (!doc["light"].is<float>() || doc["light"].isNull())
-  {
+  if (!doc["light"].is<float>() || doc["light"].isNull()) {
     return false;
   }
-  if (!doc["rain"].is<float>() || doc["rain"].isNull())
-  {
+  if (!doc["rain"].is<float>() || doc["rain"].isNull()) {
     return false;
   }
-  if (!doc["soilMoisture"].is<float>() || doc["soilMoisture"].isNull())
-  {
+  if (!doc["soilMoisture"].is<float>() || doc["soilMoisture"].isNull()) {
     return false;
   }
-  if (!doc["sensorName"].is<String>() || doc["sensorName"].isNull())
-  {
+  if (!doc["sensorName"].is<String>() || doc["sensorName"].isNull()) {
     return false;
   }
 
@@ -128,12 +118,10 @@ void handleRequest(int packetSize, String date)
   }
 }
 
-String receiveLora()
-{
+String receiveLora() {
   packet = "";
   int packetSize = LoRa.parsePacket();
-  if (packetSize)
-  {
+  if (packetSize) {
     String date = getTime();
     handleRequest(packetSize, date);
   }
@@ -170,8 +158,7 @@ void sendAckLora(String message)
         {
           response += (char)LoRa.read();
         }
-        if (response == "ACK" + sensorName)
-        {
+        if (response == "ACK"+sensorName) {
 #ifdef DEBUG
           Serial.println("Message received correctly");
 #endif
