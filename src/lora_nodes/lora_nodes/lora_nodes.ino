@@ -5,7 +5,7 @@
 #include <Adafruit_SSD1306.h>
 
 #define DEBUG
-#define SENSOR_NODE
+// #define SENSOR_NODE
 #define uS_TO_S_FACTOR 1000000
 #define TIME_TO_SLEEP 2000
 
