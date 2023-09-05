@@ -12,7 +12,7 @@
 bool start_lora = false;
 String sensorName = "sensorThree";
 bool done = false;
-const int sendMinute = 49;
+const int sendMinute = 50;
 
 #define SCREEN_WIDTH 128  // OLED display width, in pixels
 #define SCREEN_HEIGHT 64  // OLED display height, in pixels

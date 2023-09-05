@@ -68,6 +68,22 @@ unsigned long calculateSleepMicrosUntilNextSend() {
   return sleepMicros;
 }
 
+bool UpdateRTC(const String& dateStr) {
+  // Intenta analizar la cadena de fecha y hora en el formato "YYYY-MM-DD HH:MM:SS"
+  int year, month, day, hour, minute, second;
+  if (sscanf(dateStr.c_str(), "%d-%d-%d %d:%d:%d", &year, &month, &day, &hour, &minute, &second) == 6) {
+    // Verifica si la fecha es válida
+    if (year >= 2000 && month >= 1 && month <= 12 && day >= 1 && day <= 31 &&
+        hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59 && second >= 0 && second <= 59) {
+      // La fecha es válida, realiza el ajuste en el RTC
+      rtc.adjust(DateTime(year, month, day, hour, minute, second));
+      return true;
+    }
+  }
+  // La fecha no es válida o el análisis falló
+  return false;
+}
+
 int getNowMinute() {
   return rtc.now().minute();
 }

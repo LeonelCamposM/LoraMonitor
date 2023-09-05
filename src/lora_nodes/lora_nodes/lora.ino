@@ -158,9 +158,17 @@ void sendAckLora(String message)
         {
           response += (char)LoRa.read();
         }
-        if (response == "ACK"+sensorName) {
+
+        Serial.println(response);
+        DynamicJsonDocument doc(1024);
+        deserializeJson(doc, response);
+        String responseName = doc["sensorName"];
+        String responseDate = doc["newDate"];
+        if (responseName == sensorName) {
 #ifdef DEBUG
           Serial.println("Message received correctly");
+          Serial.println(responseDate);
+          UpdateRTC(responseDate);
 #endif
           ackReceived = true;
           break;
