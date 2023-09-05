@@ -96,7 +96,7 @@ void handleRequest(int packetSize, String date) {
   if (validPacket) {
     Serial.println(measurePath);
     saveData("/" + measurePath, packet, date);
-    sendLora("ACK"+measurePath);
+    sendLora("ACK" + measurePath);
 #ifdef DEBUG
     Serial.println("Recieved " + messageSize + " bytes");
     Serial.println(packet);
@@ -139,9 +139,17 @@ void sendAckLora(String message) {
         while (LoRa.available()) {
           response += (char)LoRa.read();
         }
-        if (response == "ACK"+sensorName) {
+
+        Serial.println(response);
+        DynamicJsonDocument doc(1024);
+        deserializeJson(doc, response);
+        String responseName = doc["sensorName"];
+        String responseDate = doc["newDate"];
+        if (responseName == sensorName) {
 #ifdef DEBUG
           Serial.println("Message received correctly");
+          Serial.println(responseDate);
+          UpdateRTC(responseDate);
 #endif
           ackReceived = true;
           break;
