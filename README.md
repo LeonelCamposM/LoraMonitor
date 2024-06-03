@@ -1,57 +1,44 @@
-# LoRa Monitor Project Design Overview
+# LoRa Monitor
 
-## Data Design
+## Project Overview
+This project involves developing a system for monitoring various field conditions affecting crop performance. It includes a comprehensive design and detailed documentation for constructing a functional, LoRa-enabled system capable of automatic data collection from any location. The goal is to gather accurate environmental and soil data to optimize crop management and improve yields
 
-In our LoRa Monitor project, we leverage Firebase as our backend solution for data management. Firebase's key advantage lies in its robust support for offline data synchronization within our mobile application, enabling uninterrupted data collection even when the device temporarily loses internet connectivity.
+<img src="images/cover.png" alt="depImg" height="300">
+</br>
+</br>
 
-![Data Design](design/data_design.svg)
+## Key Features
+- **Enviromental conditions charts**: This feature allows analysis of light, soil moisture, pressure, environmental humidity, and temperature.
+<img src="images/charts.png" alt="depImg" height="330">
 
-## Sensor Network Design
+- **Date selection**: This feature allows viewing specific measures like soil moisture to be analyzed over a month, a year, a day, or any interval you want.
+<img src="images/soilMoisture.png" alt="depImg" height="330">
 
-This is a high-level schematic representation illustrating the components connected to each sensor. For detailed information about the functionality of each component, please consult the PDF document: `documentation\loraMonitorDoc.pdf`.
+- **Automatic data collection**: The sensor with the solar panel provides automatic data collection from the other sensors, receiving and storing the data in memory until the user retrieves the collected measurements using his phone.
+[This video](https://www.youtube.com/watch?v=m7cy36ZBEvo) shows how to do the data collection.
+<img src="images/automaticCollection.png" alt="depImg" height="330">
 
-![Sensor Network Design](design/sensor_network_design.svg)
+- **Off-Grid System**: This system can function in locations without electricity, phone signal, or WiFi. Instead, it utilizes batteries, LoRa, and solar panels to operate off-grid.
+<table>
+  <tr>
+    <td><img src="images/offGrid.jpg" alt="depImg" height="330"></td>
+    <td><img src="images/fieldTest.jpg" alt="depImg" height="330"></td>
+  </tr>
+</table>
 
-## Communication Protocol
 
-LoRa technology was employed for communication between the sensors, ensuring efficient long-range data transmission.
+## Documentation index
+- **Design**
+This document explains how data is structured in the database, provides a high-level overview of the sensor network electronic parts, and details how LoRa communication works in our distributed system.
+<a href="/design/DESIGN.MD">Design</a>
+<br>
 
-![Communication Protocol](design/communication_protocol.svg)
+- **Execution instructions**
+Follow this guide to run the application.
+<a href="/SETUP.md">Setup Instructions</a>
+<br>
 
-### Prerequisites to run the app:
-
-- Ensure you have [Flutter](https://flutter.dev/) and [Dart](https://dart.dev/) installed on your development machine.
-- You'll need access to a Firebase project. provided on PDF documentation\loraMonitorDoc.pdf
-
-- **Adding Google Services JSON**
-
-Before running the LoRa Monitor app, you need to include the Google services JSON file in your Flutter Android project. This file is necessary for Firebase integration. Here's how to do it:
-
-1. Obtain the Google services JSON file for your Firebase project. You can find this file in your Firebase project settings.
-
-2. Rename the JSON file to `google-services.json`.
-
-3. Place the `google-services.json` file in the `C:\Users\User\source\repos\loraMonitor\src\lora_monitor\android\app\google-services.json` directory of your Flutter project.
-
-```
-YourProject/
-├── android/
-│ ├── app/
-│ │ ├── google-services.json # Add the JSON file here
-│ │ ├── ...
-├── ...
-```
-
-### Getting Started
-
-1. **Clone this repository to your local machine:**
-   git clone https://github.com/YourUsername/loraMonitor.git
-
-2. **Navigate to the project directory:**
-   cd .\loraMonitor
-
-3. **Install the Flutter dependencies::**
-   flutter pub get
-
-4. **Run the app:**
-   flutter run
+- **Documentation**
+This PDF contains a detailed construction guide, a list of needed materials and costs, team members' work distribution, iteration progress, final results, and documentation videos.
+<a href="/documentation/loraMonitorDoc.pdf">Documentation </a>
+<br>
