@@ -18,7 +18,8 @@ This project involves developing a system for monitoring various field condition
 [This video](https://www.youtube.com/watch?v=m7cy36ZBEvo) shows how to do the data collection.
 <img src="images/automaticCollection.png" alt="depImg" height="330">
 
-- **Off-Grid System**: This system can function in locations without electricity, phone signal, or WiFi. Instead, it utilizes batteries, LoRa, and solar panels to operate off-grid.
+- **Off-Grid System**: This system can function in locations without electricity, phone signal, or WiFi. Instead, it utilizes batteries, LoRa, micro sd-card and solar panels to operate off-grid.
+Also, it utilizes Firebase offline storage capabilities in order to keep the data on the user phone memory until the phone connects to the internet and uploads the data.
 <table>
   <tr>
     <td><img src="images/offGrid.jpg" alt="depImg" height="330"></td>
