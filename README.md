@@ -31,7 +31,7 @@ Also, it utilizes Firebase offline storage capabilities in order to keep the dat
 ## Documentation index
 - **Design**
 This document explains how data is structured in the database, provides a high-level overview of the sensor network electronic parts, and details how LoRa communication works in our distributed system.
-<a href="/design/DESIGN.MD">Design</a>
+<a href="/design/DESIGN.md">Design</a>
 <br>
 
 - **Execution instructions**
